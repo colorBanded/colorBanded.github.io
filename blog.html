@@ -362,16 +362,15 @@
     </div>
     
 <script type="text/javascript">
-// List of potential blog post files to check
-// GitHub Pages serves files differently, so we need to be more explicit
-const POTENTIAL_POST_FILES = [
-    'hello-world.md',
-    'first-post.md',
-    'learning-journey.md',
-    // Add more filenames as you create posts
-];
+// GitHub repository configuration
+const GITHUB_REPO = {
+    owner: 'colorBanded',
+    repo: 'colorBanded.github.io',
+    branch: 'main',
+    postsFolder: 'posts'
+};
 
-console.log('Blog script loaded for GitHub Pages, looking for files:', POTENTIAL_POST_FILES);
+console.log('Blog script loaded for GitHub Pages, will auto-discover files from:', `${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.postsFolder}`);
 
 // Simple markdown parser function
 function parseMarkdown(markdown) {
@@ -500,9 +499,41 @@ function extractExcerpt(content, maxLength = 150) {
     return excerpt || 'Click to read more...';
 }
 
+// Get list of markdown files from GitHub API
+async function getPostFilesFromGitHub() {
+    try {
+        const apiUrl = `https://api.github.com/repos/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/contents/${GITHUB_REPO.postsFolder}`;
+        console.log('Fetching file list from GitHub API:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`GitHub API request failed: ${response.status} ${response.statusText}`);
+        }
+        
+        const files = await response.json();
+        console.log('GitHub API response:', files);
+        
+        // Filter for markdown files
+        const markdownFiles = files
+            .filter(file => file.type === 'file' && file.name.endsWith('.md'))
+            .map(file => file.name);
+        
+        console.log('Found markdown files:', markdownFiles);
+        return markdownFiles;
+        
+    } catch (error) {
+        console.error('Error fetching files from GitHub API:', error);
+        // Fallback to manual list if API fails
+        return ['hello-world.md']; // At least try the file we know exists
+    }
+}
+
 // Discover and load blog posts by checking individual files
 async function discoverBlogPosts() {
     console.log('Starting blog post discovery for GitHub Pages...');
+    console.log('Current URL:', window.location.href);
+    console.log('Base URL:', window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/'));
+    
     const posts = [];
     const container = document.getElementById('posts-container');
     
@@ -511,13 +542,35 @@ async function discoverBlogPosts() {
         return [];
     }
     
-    container.innerHTML = '<div class="loading">Scanning for blog posts...</div>';
+    container.innerHTML = '<div class="loading">Discovering blog posts from GitHub...</div>';
     
-    for (const filename of POTENTIAL_POST_FILES) {
-        console.log(`Trying to fetch: posts/${filename}`);
+    // Get list of files from GitHub API
+    const postFiles = await getPostFilesFromGitHub();
+    
+    if (postFiles.length === 0) {
+        console.log('No markdown files found in posts folder');
+        container.innerHTML = `
+            <div class="info">
+                <strong>No blog posts found!</strong><br>
+                Make sure you have markdown (.md) files in your posts folder:<br>
+                <a href="https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}" target="_blank">
+                    https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}
+                </a>
+            </div>
+        `;
+        return [];
+    }
+    
+    container.innerHTML = `<div class="loading">Loading ${postFiles.length} blog post${postFiles.length !== 1 ? 's' : ''}...</div>`;
+    
+    for (const filename of postFiles) {
+        const fullUrl = `posts/${filename}?v=${Date.now()}`;
+        console.log(`Trying to fetch: ${fullUrl}`);
+        console.log(`Full URL: ${window.location.origin}${window.location.pathname.replace(/\/[^\/]*$/, '/')}${fullUrl}`);
+        
         try {
             // GitHub Pages specific fetch with cache busting
-            const response = await fetch(`posts/${filename}?v=${Date.now()}`, {
+            const response = await fetch(fullUrl, {
                 method: 'GET',
                 headers: {
                     'Cache-Control': 'no-cache'
@@ -525,6 +578,7 @@ async function discoverBlogPosts() {
             });
             
             console.log(`Response for ${filename}:`, response.status, response.statusText);
+            console.log(`Response URL: ${response.url}`);
             
             if (response.ok) {
                 const content = await response.text();
@@ -581,11 +635,13 @@ function displayBlogPosts(posts) {
             <div class="info">
                 <strong>No blog posts found!</strong><br>
                 For GitHub Pages, make sure you have:<br>
-                1. A 'posts' folder in your repository root<br>
-                2. Files named exactly as listed in POTENTIAL_POST_FILES<br>
-                3. Files committed and pushed to GitHub<br>
-                4. Proper frontmatter format (see console for details)<br><br>
-                <strong>Current file list:</strong> ${POTENTIAL_POST_FILES.join(', ')}<br>
+                1. Markdown (.md) files in your posts folder<br>
+                2. Files committed and pushed to GitHub<br>
+                3. Proper frontmatter format (see console for details)<br><br>
+                <strong>Repository:</strong> 
+                <a href="https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}" target="_blank">
+                    ${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.postsFolder}
+                </a><br>
                 <strong>Debug info:</strong> Check browser console for details.
             </div>
         `;
