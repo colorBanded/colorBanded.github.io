@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index - colorBanded</title>
+    <style type="text/css">
+        body {
+            font-family: "Verdana", "Arial", sans-serif;
+            margin: 0;
+            padding: 20px 0 0 0;
+            background-color: #f6f6f6;
+            color: #333333;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        #container {
+            width: 960px;
+            margin: 0 auto;
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        #container:before, #container:after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            background: #999999;
+            bottom: 15px;
+            width: 50%;
+            height: 20px;
+            box-shadow: 0 15px 10px #999999;
+        }
+
+        #container:before {
+            left: 10px;
+            transform: rotate(-3deg);
+        }
+
+        #container:after {
+            right: 10px;
+            transform: rotate(3deg);
+        }
+
+        #shadow-container {
+            width: 980px;
+            margin: 0 auto;
+            background: url('data:image/gif;base64,R0lGODlhZAAFAIAAAP///8zMzCH5BAAAAAAALAAAAABkAAUAAAIPhI+py+0Po5y02ouz3rwXADs=') repeat-y center;
+            padding: 0 10px;
+        }
+        
+        #header {
+            background: #e0e8f0;
+            background-image: url('data:image/gif;base64,R0lGODlhAQAcAIAAAODg4P///yH5BAAAAAAALAAAAAABABwAAAIIhI+py+0PYysAOw==');
+            border-bottom: 1px solid #aaaaaa;
+            height: 80px;
+            padding: 10px;
+        }
+        
+        #header h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            color: #333333;
+            font-weight: normal;
+        }
+        
+        #header p {
+            margin: 5px 0 0 0;
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        #navigation {
+            float: left;
+            width: 180px;
+            background-color: #f8f8f8;
+            border-right: 1px solid #dddddd;
+            padding: 10px;
+            min-height: 500px;
+        }
+        
+        #navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #navigation li {
+            margin-bottom: 5px;
+        }
+        
+        #navigation a {
+            display: block;
+            padding: 5px;
+            border: 1px solid #dddddd;
+            background-color: #f0f0f0;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        #navigation a:hover {
+            background-color: #e0e0e0;
+            border-color: #bbbbbb;
+            text-decoration: underline;
+        }
+        
+        #content {
+            margin-left: 200px;
+            padding: 15px;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #dddddd;
+            background-color: #ffffff;
+        }
+        
+        .section-header {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #dddddd;
+            padding: 5px 10px;
+            font-weight: bold;
+            color: #333333;
+        }
+        
+        .section-content {
+            padding: 10px;
+        }
+        
+        table.skills {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table.skills th {
+            background-color: #e6e6e6;
+            border: 1px solid #cccccc;
+            padding: 5px;
+            text-align: left;
+        }
+        
+        table.skills td {
+            border: 1px solid #cccccc;
+            padding: 5px;
+        }
+        
+        .project {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dotted #cccccc;
+        }
+        
+        .project:last-child {
+            border-bottom: none;
+        }
+        
+        .project h3 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+
+        .artwork-gallery {
+            display: table;
+            width: 100%;
+        }
+
+        .artwork-item {
+            display: table-cell;
+            width: 33%;
+            padding: 5px;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .artwork-item img {
+            border: 1px solid #cccccc;
+            padding: 3px;
+            background-color: #ffffff;
+            max-width: 150px;
+            height: auto;
+        }
+
+        .artwork-item p {
+            margin: 5px 0;
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        #footer {
+            clear: both;
+            background-color: #f0f0f0;
+            border-top: 1px solid #dddddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        a {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+        
+        a:hover {
+            color: #003366;
+        }
+        
+        
+        .last-updated {
+            font-style: italic;
+            font-size: 10px;
+            color: #999999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="shadow-container">
+        <div id="container">
+            <div id="header">
+                <h1>colorBanded</h1>
+                <p>computer person thing</p>
+            </div>
+            
+            <div id="navigation">
+                <ul>
+                    <li><a href="#about">About Me</a></li>
+                    <li></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+                
+                <div style="margin-top: 20px; padding: 10px; border: 1px dashed #cccccc; background-color: #ffffcc; font-size: 11px;">
+                    <strong>Site Stats:</strong><br>
+                    <br>
+                    Users: 1<br>
+                    Last Updated: 07/09/2025
+              </div>
+
+                <div style="margin-top: 15px; padding: 8px; border: 1px solid #cccccc; background-color: #f0f8ff; font-size: 10px;">
+                    <strong>Hosted on:</strong><br>
+                    <img src="https://cdn-icons-png.flaticon.com/256/25/25231.png" alt="GitHub" width="15" style="vertical-align: middle; margin-right: 3px;">
+                    GitHub Pages
+                </div>
+          </div>
+            
+            <div id="content">
+                                <div class="section" id="about">
+    <div class="section-header">User Profile: colorBanded</div>
+    <div class="section-content">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td rowspan="5" style="width: 120px; vertical-align: top; padding-right: 15px; border-right: 1px dotted #cccccc;">
+                    <img src="https://avatars.githubusercontent.com/u/207304171?v=4" alt="colorBanded's Avatar" style="width: 100px; height: 100px; border: 2px solid #cccccc; padding: 2px; background-color: #ffffff;">
+                    <div style="text-align: center; margin-top: 5px; font-size: 10px; color: #666666;">
+                        <strong>Online Status:</strong><br>
+                        <span style="color: #00aa00;">● Online</span>
+                    </div>
+                </td>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee; width: 120px; font-weight: bold; background-color: #f8f8f8;">Username:</td>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee;">colorBanded</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee; font-weight: bold; background-color: #f8f8f8;">Location:</td>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee;">California</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee; font-weight: bold; background-color: #f8f8f8;">Posts:</td>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee;">2</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px; border-bottom: 1px dotted #eeeeee; font-weight: bold; background-color: #f8f8f8;">Events:</td>
+              <td style="padding: 5px; border-bottom: 1px dotted #eeeeee;">Github Undercity (Going)</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee; font-weight: bold; background-color: #f8f8f8;">Interests:</td>
+                <td style="padding: 5px; border-bottom: 1px dotted #eeeeee;">Code, Art, Hardware, Game Design</td>
+            </tr>
+          </table>
+        
+        <div style="margin-top: 15px; padding: 10px; background-color: #f0f8ff; border: 1px dashed #cccccc;">
+            <strong style="color: #0066cc;">About Me:</strong><br>
+            <div style="margin-top: 5px; font-size: 11px; line-height: 1.5;">
+              <p>I made this website to have a single place where I could post and put my projects out! I might make an RSS feed for this website later.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 10px; padding: 8px; background-color: #ffffcc; border: 1px solid #ffcc00; font-size: 10px;"><span style="font-style: italic; color: #666666;">"I do stuff sometimes.&quot;</span>
+        - me, 2025</div>
+
+        <div style="margin-top: 10px; text-align: right; font-size: 10px; color: #999999;">
+            <strong>shameless website plug muahahaha</strong></div>
+    </div>
+</div>
+                
+                <div class="section" id="skills">
+                    <div class="section-header">Skills & Tools</div>
+                    <div class="section-content">
+                        <table class="skills">
+                            <tr>
+                                <th width="25%">Category</th>
+                                <th width="35%">Skills</th>
+                                <th width="40%">Experience Level</th>
+                            </tr>
+                          <tr>
+                                <td style="background-color: #f8f8f8; font-weight: bold;">Development</td>
+                                <td>HTML, CSS, JavaScript</td>
+                                <td>Intermediate HTML/CSS, Learning JavaScript</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f8f8f8; font-weight: bold;">Design & Art</td>
+                                <td>Digital Art, UI/UX Design</td>
+                                <td>Exploring digital techniques and design principles</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f8f8f8; font-weight: bold;">Hardware</td>
+                                <td>KiCad, Fusion360</td>
+                                <td>PCB design basics, 3D modeling fundamentals</td>
+                            </tr>
+                            <tr>
+                              <td style="background-color: #f8f8f8; font-weight: bold;">Tools</td>
+                                <td>Git, GitHub, VS Code</td>
+                                <td>Version control and development environment</td>
+                            </tr>
+                        </table>
+                        
+                        <div style="margin-top: 15px; padding: 8px; background-color: #f0f8ff; border: 1px dashed #cccccc; font-size: 11px;">
+                            <strong>Currently Learning:</strong> Advanced JavaScript concepts, responsive web design, digital painting techniques, and PCB manufacturing processes.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section" id="projects">
+                    <div class="section-header">My Projects</div>
+                    <div class="section-content">
+                        <div class="project">
+                            <h3>NotMyMacro(Pad)</h3>
+                            <p>A custom macropad designed for the GitHub HackClub's 2025 Highway to Undercity challenge. I had to do a bit of math for this one</p>
+                            <p><strong>Technologies used:</strong> KiCad, Fusion360, 3D Modeling, PCB Design</p>
+                            <p><strong>What I learned:</strong> PCB layout principles, component selection, Relearned Basic Geometry :sob:</p>
+                            <p><a href="https://github.com/colorBanded/nmm-fw" onclick="">View Project &raquo;</a></p>
+                        </div>
+                        
+                        <div class="project">
+                            <h3>Portfolio Website (This Site!)</h3>
+                            <p>My website for website-ey things. Ill update soon(tm)</p>
+                            <p><strong>Technologies used:</strong> HTML, CSS, JavaScript</p>
+                            <p><strong>What I learned:</strong> Web layout techniques, CSS styling, responsive considerations, GitHub Pages deployment</p>
+                            <p><a href="#" onclick="alert('Welcome lol'); return false;">V9ew Project &raquo;</a></p>
+                        </div>
+                    </div>
+                </div>
+
+              <div class="section" id="artwork">
+                    <div class="section-header">Gallery dot jpeg</div>
+                    <div class="section-content">
+                        <p>Here's a collection of my digital artwork and design experiments. I'm constantly exploring new styles and techniques!</p>
+                        
+                        <div class="artwork-gallery">
+                            <div class="artwork-item">
+                              <img src=https://avatars.githubusercontent.com/u/207304171?v=4?height=150&width=150" alt="Digital Art Piece 1">
+                                <p><strong>github profile picture</strong><br>
+                              original image i created for class</p>
+                            </div>
+                            <div class="artwork-item">
+                              <img src="/placeholder.svg?height=150&width=150" alt="soon(tm)">
+                                <p><strong>soon(tm)</strong><br>
+                              eventually</p>
+                            </div>
+                            <div class="artwork-item">
+                              <img src="/placeholder.svg?height=150&width=150" alt="soon(tm)">
+                                <p><strong>soon(tm)</strong><br>
+                                  someday</p>
+                            </div>
+                        </div>
+
+                      <div style="margin-top: 15px; padding: 10px; background-color: #f8f8f8; border: 1px dashed #cccccc;">
+                            <p style="margin: 0; font-size: 11px; color: #666666;"><em>Ill put more stuff soon(tm)</em></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section" id="learning">
+                    <div class="section-header">Currently Learning</div>
+                    <div class="section-content">
+                        <div style="margin-bottom: 15px;">
+                            <h3 style="margin-top: 0; margin-bottom: 5px;">Game Development</h3>
+                          <div style="font-style: italic; color: #666666;">2024 - Present</div>
+                            <ul>
+                                <li>Starting with GameMaker Studio, now using Godot and C/C++</li>
+                                <li></li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h3 style="margin-top: 0; margin-bottom: 5px;"> Web Development</h3>
+                            <div style="font-style: italic; color: #666666;">2023 - Present</div>
+                            <ul>
+                                <li>Started with HTML and CSS fundamentals</li>
+                                <li>Learning JavaScript for interactive web experiences</li>
+                                <li>Exploring responsive design principles</li>
+                                <li>Understanding version control with Git and GitHub</li>
+                            </ul>
+                        </div>
+
+                      <div>
+                            <h3 style="margin-top: 0; margin-bottom: 5px;">Digital Art</h3>
+                        <div style="font-style: italic; color: #666666;">2024 - Present</div>
+                        <ul>
+                          <li>Using Photoshop (MICHEAL! DONT LEAVE ME HERE!)</li>
+                              <li>Learning color rendering and composition</li>
+                              <li>Figuring out art style</li>
+                          </ul>
+                        </div>
+
+                        <div class="last-updated">more stuff soon(tm)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="footer">
+                &copy; 2025 colorBanded | Hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a> | <a href="#" onclick="alert('Under construction!'); return false;">Site Map</a><br>
+            Best viewed in LibreWolf Browser - Github.com/colorbanded</div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        // Add smooth scrolling to navigation links
+        var navLinks = document.getElementById('navigation').getElementsByTagName('a');
+        for (var i = 0; i < navLinks.length; i++) {
+            navLinks[i].onclick = function() {
+                var targetId = this.getAttribute('href').substring(1);
+                var targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    var targetPosition = targetElement.offsetTop;
+                    window.scrollTo(0, targetPosition - 20);
+                }
+                return false;
+            };
+        }
+        
+        // Update the last updated date
+        var today = new Date();
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var dateString = months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+        
+        // Update site stats with current date
+        var statsDiv = document.querySelector('#navigation div');
+        if (statsDiv && statsDiv.innerHTML.includes('Last Updated:')) {
+            statsDiv.innerHTML = statsDiv.innerHTML.replace('01/10/2025', dateString.replace(/(\w+) (\d+), (\d+)/, '$2/$1/$3').replace('January', '01').replace('February', '02').replace('March', '03').replace('April', '04').replace('May', '05').replace('June', '06').replace('July', '07').replace('August', '08').replace('September', '09').replace('October', '10').replace('November', '11').replace('December', '12'));
+        }
+    </script>
+</body>
+</html>

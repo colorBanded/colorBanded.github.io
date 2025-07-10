@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Links & Contact - colorBanded</title>
+    <style type="text/css">
+        body {
+	font-family: "Verdana", "Arial", sans-serif;
+	margin: 0;
+	padding: 20px 0 0 0;
+	background-color: #f6f6f6;
+	color: #333333;
+	font-size: 12px;
+	line-height: 1.4;
+	text-align: left;
+        }
+        
+        #container {
+            width: 960px;
+            margin: 0 auto;
+            border: 1px solid #cccccc;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        #container:before, #container:after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            background: #999999;
+            bottom: 15px;
+            width: 50%;
+            height: 20px;
+            box-shadow: 0 15px 10px #999999;
+        }
+
+        #container:before {
+            left: 10px;
+            transform: rotate(-3deg);
+        }
+
+        #container:after {
+            right: 10px;
+            transform: rotate(3deg);
+        }
+
+        #shadow-container {
+            width: 980px;
+            margin: 0 auto;
+            background: url('data:image/gif;base64,R0lGODlhZAAFAIAAAP///8zMzCH5BAAAAAAALAAAAABkAAUAAAIPhI+py+0Po5y02ouz3rwXADs=') repeat-y center;
+            padding: 0 10px;
+        }
+        
+        #header {
+            background: #e0e8f0;
+            background-image: url('data:image/gif;base64,R0lGODlhAQAcAIAAAODg4P///yH5BAAAAAAALAAAAAABABwAAAIIhI+py+0PYysAOw==');
+            border-bottom: 1px solid #aaaaaa;
+            height: 80px;
+            padding: 10px;
+        }
+        
+        #header h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            color: #333333;
+            font-weight: normal;
+        }
+        
+        #header p {
+            margin: 5px 0 0 0;
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        #navigation {
+            float: left;
+            width: 180px;
+            background-color: #f8f8f8;
+            border-right: 1px solid #dddddd;
+            padding: 10px;
+            min-height: 500px;
+        }
+        
+        #navigation ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #navigation li {
+            margin-bottom: 5px;
+        }
+        
+        #navigation a {
+            display: block;
+            padding: 5px;
+            border: 1px solid #dddddd;
+            background-color: #f0f0f0;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        #navigation a:hover {
+            background-color: #e0e0e0;
+            border-color: #bbbbbb;
+            text-decoration: underline;
+        }
+
+        #navigation a.current {
+            background-color: #d0d8e0;
+            border-color: #999999;
+            color: #003366;
+        }
+        
+        #content {
+            margin-left: 200px;
+            padding: 15px;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #dddddd;
+            background-color: #ffffff;
+        }
+        
+        .section-header {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #dddddd;
+            padding: 5px 10px;
+            font-weight: bold;
+            color: #333333;
+        }
+        
+        .section-content {
+            padding: 10px;
+        }
+
+        .link-category {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dotted #cccccc;
+        }
+
+        .link-category:last-child {
+            border-bottom: none;
+        }
+
+        .link-category h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #0066cc;
+            font-size: 14px;
+        }
+
+        .link-item {
+            margin-bottom: 8px;
+            padding: 5px;
+            background-color: #f8f8f8;
+            border: 1px solid #eeeeee;
+        }
+
+        .link-item a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-item a:hover {
+            text-decoration: underline;
+        }
+
+        .link-description {
+            font-size: 11px;
+            color: #666666;
+            margin-top: 3px;
+        }
+
+        .button-collection {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border: 1px dashed #cccccc;
+        }
+
+        .web-button {
+            margin: 2px;
+            border: 1px solid #999999;
+            display: inline-block;
+        }
+
+        .contact-form {
+            margin-bottom: 20px;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .contact-form input, .contact-form textarea, .contact-form select {
+            width: 100%;
+            border: 1px solid #cccccc;
+            padding: 3px;
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 11px;
+            background-color: #ffffff;
+        }
+
+        .contact-form textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .button {
+            background-color: #f0f0f0;
+            border: 1px solid #cccccc;
+            padding: 4px 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        .button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .guestbook-entry {
+            margin-bottom: 15px;
+            padding: 8px;
+            background-color: #f8f8f8;
+            border: 1px solid #dddddd;
+        }
+
+        .guestbook-header {
+            font-weight: bold;
+            color: #0066cc;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .guestbook-message {
+            font-size: 11px;
+            line-height: 1.4;
+            margin-bottom: 5px;
+        }
+
+        .guestbook-footer {
+            font-size: 10px;
+            color: #666666;
+            text-align: right;
+        }
+
+        .social-buttons {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .social-button {
+            display: inline-block;
+            margin: 3px;
+            padding: 5px 10px;
+            background-color: #4267B2;
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid #365899;
+        }
+
+        .social-button:hover {
+            background-color: #365899;
+            color: white;
+        }
+
+        .social-button.myspace {
+            background-color: #003366;
+            border-color: #002244;
+        }
+
+        .social-button.aim {
+	background-color: #00CCFF;
+	color: #000000;
+	border-color: #0066FF;
+        }
+
+        .social-button.github {
+            background-color: #333333;
+            border-color: #222222;
+        }
+
+        .blink {
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .marquee {
+            background-color: #ffffcc;
+            border: 1px solid #ffcc00;
+            padding: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        #footer {
+            clear: both;
+            background-color: #f0f0f0;
+            border-top: 1px solid #dddddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #666666;
+        }
+        
+        a {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+        
+        a:hover {
+            color: #003366;
+        }
+    </style>
+</head>
+<body>
+    <div id="shadow-container">
+        <div id="container">
+            <div id="header">
+                <h1>colorBanded</h1>
+                <p>computer person thing</p>
+            </div>
+            
+            <div id="navigation">
+                <ul>
+                    <li><a href="index.html">About Me</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="links.html" class="current">Links & Contact</a></li>
+                </ul>
+                
+                <div style="margin-top: 20px; padding: 10px; border: 1px dashed #cccccc; background-color: #ffffcc; font-size: 11px;">
+                    <strong>Page Stats:</strong><br>
+                    Links: 23<br>
+                    Guestbook Entries: 7<br>
+                    Last Updated: 01/10/2025
+              </div>
+
+                <div style="margin-top: 15px; padding: 8px; border: 1px solid #cccccc; background-color: #f0f8ff; font-size: 10px;">
+                    <strong>Hosted on:</strong><br>
+                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMEMzLjU4IDAgMCAzLjU4IDAgOEMwIDExLjU0IDIuMjkgMTQuNTMgNS40NyAxNS41OUM1Ljg3IDE1LjY2IDYuMDIgMTUuNDIgNi4wMiAxNS4yMUM2LjAyIDE1LjAyIDYuMDEgMTQuMzkgNi4wMSAxMy43MkM0IDE0LjA5IDMuNDggMTIuNjggMy4yOCAxMS45NUMzLjE3IDExLjU3IDIuNzggMTAuOTYgMi40NCAxMC43NkMyLjE1IDEwLjYgMS43MSAxMC4yMyAxLjcgMTAuMjNDMS43IDEwLjIzIDIuNDQgMTAuMzEgMi44OCAxMC44OEMzLjMgMTEuNDUgMy45NyAxMS4yNCA0LjI4IDExLjA5QzQuMzQgMTAuNTcgNC41NCAxMC4zNSA0Ljc2IDEwLjIyQzMuNDcgMTAuMDkgMi4xNCA5LjU2IDIuMTQgNi44MUMyLjE0IDYuMDMgMi40MiA1LjM5IDIuODkgNC44OUMyLjgyIDQuNzYgMi42IDQuMDMgMi45NiAzLjA2QzIuOTYgMy4wNiAzLjUgMi44NyA2IDQuNzVDNi41IDQuNjMgNy4yNSA0LjU3IDggNC41N0M4Ljc1IDQuNTcgOS41IDQuNjMgMTAgNC43NUMxMi41IDIuODcgMTMuMDQgMy4wNiAxMy4wNCAzLjA2QzEzLjQgNC4wMyAxMy4xOCA0Ljc2IDEzLjExIDQuODlDMTMuNTggNS4zOSAxMy44NiA6LjAzIDEzLjg2IDYuODFDMTMuODYgOS41NiAxMi41MyAxMC4wOSAxMS4yNCAxMC4yMkMxMS40NiAxMC40NSAxMS42NiAxMC44NyAxMS42NiAxMS41M0MxMS42NiAxMi41IDExLjY1IDEzLjI3IDExLjY1IDE1LjIxQzExLjY1IDE1LjQyIDExLjggMTUuNjYgMTIuMiAxNS41OUMxNS43MSAxNC41MyAxNiAxMS41NCAxNiA4QzE2IDMuNTggMTIuNDIgMCA4IDBaIiBmaWxsPSIjMjQyOTJFIi8+Cjwvc3ZnPgo=" alt="GitHub" style="vertical-align: middle; margin-right: 3px;">
+                    GitHub Pages
+                </div>
+          </div>
+            
+            <div id="content">
+                <div class="marquee">
+                    <div class="marquee-text">
+                        <em>&quot;do i look like i know huat a jpeg is, i just want a picture of a gosh darn hot dog&quot;</em></div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="section">
+                    <div class="section-header">Get In Touch!</div>
+                    <div class="section-content">
+                        <div class="social-buttons">
+                            <a href="https://github.com/colorbanded" class="social-button github" target="_blank">GitHub</a>
+                            <a href="https://bsky.app/profile/connectory.net" class="social-button" onclick="alert('Discord: colorBanded#1337'); return false;">Bluesky</a>
+                            <a href="#" class="social-button myspace" onclick="alert('MySpace coming soon!'); return false;">Xitter</a>
+                            <a href="#" class="social-button aim" onclick="alert('AIM: colorBanded2025'); return false;">Signal</a>
+                        </div>
+
+                       <div class="contact-form">
+    <h3 style="margin-top: 0; color: #0066cc;">Send me a message!</h3>
+    <form action="https://formsubmit.co/videoguy84@proton.me" method="POST">
+        <!-- FormSubmit Configuration -->
+        <input type="hidden" name="_subject" value="New message from colorBanded portfolio!">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://connectory.net/links.html?success=true">
+        
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="website">Your Website (optional):</label>
+        <input type="url" id="website" name="website" placeholder="http://">
+        
+        <label for="subject">Subject:</label>
+        <select id="subject" name="subject">
+            <option value="general">General Question</option>
+            <option value="collab">Collaboration</option>
+            <option value="feedback">Feedback</option>
+            <option value="link-exchange">Link Exchange</option>
+            <option value="other">Other</option>
+        </select>
+        
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" required placeholder="What in tarnation..."></textarea>
+        
+        <input type="submit" value="Send Message!" class="button">
+    </form>
+    
+    <!-- Success message display -->
+    <div id="success-message" style="display: none; margin-top: 15px; padding: 10px; background-color: #e6ffe6; border: 1px solid #00cc00; color: #006600;">
+        <strong>Message sent successfully! 📧</strong><br>
+        Thanks for reaching out! I'll get back to you soon.
+    </div>
+</div>
+                    </div>
+                </div>
+
+                <!-- Links Section -->
+                <div class="section">
+                    <div class="section-header">Cool Links & Resources</div>
+                    <div class="section-content">
+                        <div class="link-category">
+                            <h3> Web Development Stuff</h3>
+                            <div class="link-item">
+                                <a href="https://developer.mozilla.org/" target="_blank">MDN Web Docs</a>
+                                <div class="link-description">GO HERE FIRST they have wonderful documentation</div>
+                          </div>
+                            <div class="link-item">
+                                <a href="https://www.w3schools.com/" target="_blank">W3Schools</a>
+                                <div class="link-description">Really cool tutorials on a bunch of different languages</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://css-tricks.com/" target="_blank">CSS-Tricks</a>
+                                <div class="link-description">thanks peter, very cool</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://stackoverflow.com/" target="_blank">Stack Overflow</a>
+                                <div class="link-description">git push -force</div>
+                            </div>
+                        </div>
+
+                        <div class="link-category">
+                            <h3> Art & Design Inspiration</h3>
+                            <div class="link-item">
+                                <a href="https://dribbble.com/" target="_blank">Dribbble</a>
+                                <div class="link-description">something something design</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://www.behance.net/" target="_blank">Behance</a>
+                                <div class="link-description">design stuff but in like that inspirational quote in handwriting font style</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://coolors.co/" target="_blank">Coolors</a>
+                                <div class="link-description">adobe colors alternative</div>
+                            </div>
+                        </div>
+
+                        <div class="link-category">
+                            <h3>Hardware & Electronics</h3>
+                            <div class="link-item">
+                                <a href="https://www.kicad.org/" target="_blank">KiCad</a>
+                                <div class="link-description">PCB Design Software, Open source</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://www.arduino.cc/" target="_blank">Arduino</a>
+                                <div class="link-description">Very mindful, very demure</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://www.adafruit.com/" target="_blank">Adafruit</a>
+                                <div class="link-description">Got my first Single Board Computer from them</div>
+                            </div>
+                        </div>
+
+                        <div class="link-category">
+                            <h3> Cool Sites I Found</h3>
+                            <div class="link-item">
+                                <a href="https://hackclub.com/" target="_blank">Hack Club</a>
+                                <div class="link-description">Github Hack Club, where I started &quot;profesionally&quot;</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://neocities.org/" target="_blank">Neocities</a>
+                                <div class="link-description">Very Cool</div>
+                            </div>
+                            <div class="link-item">
+                                <a href="https://www.cameronsworld.net/" target="_blank">Cameron's World</a>
+                                <div class="link-description">SPACE JAM REFERENCE?!?!??!?!</div>
+                            </div>
+                        </div>
+
+                      <div class="button-collection">
+                            <strong>Web Buttons Collection:</strong><br>
+                          <img src="data:image/gif;base64,R0lGODlhUAAcAKEAAP///wAAAP8AAP///yH5BAEKAAMALAAAAABQABwAAAJEnI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9ysOADs=" alt="Made with Notepad" class="web-button">
+                          <img src="data:image/gif;base64,R0lGODlhUAAcAKEAAP///wAAAP8AAP///yH5BAEKAAMALAAAAABQABwAAAJEnI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9ysOADs=" alt="Best Viewed in Firefox" class="web-button">
+                          <img src="data:image/gif;base64,R0lGODlhUAAcAKEAAP///wAAAP8AAP///yH5BAEKAAMALAAAAABQABwAAAJEnI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9ysOADs=" alt="HTML Validated" class="web-button">
+                            <br>
+                          <span style="font-size: 10px; color: #666666;">more soon(tm)</span>
+                        </div>
+                    </div>
+                </div>
+
+               
+
+                <!-- Web Ring Section -->
+                <!-- Support Section -->
+<div class="section">
+    <div class="section-header">Support mah projects</div>
+    <div class="section-content">
+        <div style="margin-bottom: 15px; padding: 10px; background-color: #ffffcc; border: 1px solid #ffcc00;">
+            <strong>Want to support me?</strong><br>
+            <span style="font-size: 11px;">
+                Feel free to donate or commission me to help you make your next animation, design, or website/app!
+            </span>
+        </div>
+        
+        <div style="background-color: #f0f8ff; border: 2px dashed #0066cc; padding: 15px;">
+            <h3 style="margin-top: 0; margin-bottom: 15px; color: #0066cc; text-align: center;">Crypto Addresses</h3>
+            
+            <div style="margin-bottom: 15px; padding: 8px; background-color: #ffffff; border: 1px solid #cccccc;">
+                <strong style="color: #ff6600;">🟠 Monero (XMR):</strong><br>
+                <code style="font-size: 10px; word-break: break-all; background-color: #f8f8f8; padding: 2px;">
+                    8BbpEbmoC93TYtKDKb9bYrWeuwMa2La7aJHUNks9bqNQd6ESdW52Kj8gvTS5bKrtUsAFERzUk8M4ZAkiSnNHqt32BpaMurD
+                </code>
+            </div>
+            
+            <div style="margin-bottom: 15px; padding: 8px; background-color: #ffffff; border: 1px solid #cccccc;">
+                <strong style="color: #627eea;">🔷 Ethereum/Base/Monad:</strong><br>
+                <code style="font-size: 11px; word-break: break-all; background-color: #f8f8f8; padding: 2px;">
+                    0xA9Cf744E394b45078Ed57B5BCaa6eD38c8f8a65F
+                </code>
+            </div>
+            
+            <div style="padding: 8px; background-color: #ffffff; border: 1px solid #cccccc;">
+                <strong style="color: #f7931a;">🟡 Bitcoin (BTC):</strong><br>
+                <code style="font-size: 11px; word-break: break-all; background-color: #f8f8f8; padding: 2px;">
+                    bc1quu68url2x9cqg3k3t8dgjp6k8ffk9dzl4p8fmj
+                </code>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px; font-size: 10px; color: #666666;"><em>Double Click addresses to select whole address.</em></div>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 10px; background-color: #e6ffe6; border: 1px solid #00cc00; text-align: center;">
+            <strong style="color: #006600;">💼 Commission Work Available!</strong><br>
+            <span style="font-size: 11px; color: #006600;">
+                Web design • Digital art • Animation • PCB design
+            </span>
+        </div>
+    </div>
+</div>
+            
+            <div id="footer">
+                &copy; 2025 colorBanded | Hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a> | <a href="#" onclick="alert('Under construction!'); return false;">Site Map</a><br>
+                Best viewed in LibreWolf Browser - Github.com/colorbanded
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+// Check for success parameter and show message
+function checkForSuccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+        document.getElementById('success-message').style.display = 'block';
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        // Scroll to success message
+        document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function submitGuestbook() {
+    var name = document.getElementById('gb-name').value;
+    var website = document.getElementById('gb-website').value;
+    var message = document.getElementById('gb-message').value;
+    
+    if (!name || !message) {
+        alert('Please fill in your name and message!');
+        return false;
+    }
+    
+    // Create new guestbook entry
+    var entry = document.createElement('div');
+    entry.className = 'guestbook-entry';
+    
+    var today = new Date();
+    var dateString = today.toLocaleDateString() + ' at ' + today.toLocaleTimeString();
+    
+    var websiteLink = website ? ' <a href="' + website + '" target="_blank">[visit site]</a>' : '';
+    
+    entry.innerHTML = `
+        <div class="guestbook-header">${name}${websiteLink}</div>
+        <div class="guestbook-message">${message}</div>
+        <div class="guestbook-footer">Posted on ${dateString}</div>
+    `;
+    
+    // Add to top of guestbook
+    var guestbook = document.getElementById('guestbook-entries');
+    guestbook.insertBefore(entry, guestbook.firstChild);
+    
+    alert('Thanks for signing my guestbook, ' + name + '! Your entry has been added! 📝');
+    document.getElementById('guestbookForm').reset();
+    return false;
+}
+
+// Add some retro effects
+document.addEventListener('DOMContentLoaded', function() {
+    // Random blink effect for the guestbook star
+    setInterval(function() {
+        var blinkElements = document.querySelectorAll('.blink');
+        blinkElements.forEach(function(el) {
+            el.style.visibility = el.style.visibility === 'hidden' ? 'visible' : 'hidden';
+        });
+    }, 500);
+    
+    // Check for form submission success
+    checkForSuccess();
+});
+</script>
+</body>
+</html>
