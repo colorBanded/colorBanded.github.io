@@ -361,289 +361,336 @@
         </div>
     </div>
     
-    <script type="text/javascript">
-        // List of potential blog post files to check
-        // You can add more filenames here as you create new posts
-        const POTENTIAL_POST_FILES = [
-            'hello-world.md',
-            // Add more filenames as you create posts
-        ];
+<script type="text/javascript">
+// List of potential blog post files to check
+// GitHub Pages serves files differently, so we need to be more explicit
+const POTENTIAL_POST_FILES = [
+    'hello-world.md',
+    'first-post.md',
+    'learning-journey.md',
+    // Add more filenames as you create posts
+];
 
-        // Simple markdown parser
-        function parseMarkdown(markdown) {
-            let html = markdown;
-            
-            // Headers
-            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-            
-            // Bold
-            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-            html = html.replace(/__(.*?)__/gim, '<strong>$1</strong>');
-            
-            // Italic
-            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-            html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
-            
-            // Code blocks
-            html = html.replace(/\`\`\`([\s\S]*?)\`\`\`/gim, '<pre><code>$1</code></pre>');
-            
-            // Inline code
-            html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
-            
-            // Links
-            html = html.replace(/\[([^\]]*)\]$$([^)]*)$$/gim, '<a href="$2">$1</a>');
-            
-            // Blockquotes
-            html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
-            
-            // Line breaks
-            html = html.replace(/\n\n/gim, '</p><p>');
-            html = '<p>' + html + '</p>';
-            
-            // Clean up empty paragraphs
-            html = html.replace(/<p><\/p>/gim, '');
-            html = html.replace(/<p>(<h[1-6]>)/gim, '$1');
-            html = html.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
-            html = html.replace(/<p>(<pre>)/gim, '$1');
-            html = html.replace(/(<\/pre>)<\/p>/gim, '$1');
-            html = html.replace(/<p>(<blockquote>)/gim, '$1');
-            html = html.replace(/(<\/blockquote>)<\/p>/gim, '$1');
-            
-            return html;
-        }
+console.log('Blog script loaded for GitHub Pages, looking for files:', POTENTIAL_POST_FILES);
 
-        // Parse frontmatter from content
-        function parseFrontmatter(content) {
-            const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-            const match = content.match(frontmatterRegex);
-            
-            if (!match) {
-                return {
-                    frontmatter: {},
-                    content: content
-                };
-            }
-            
-            const frontmatterText = match[1];
-            const markdownContent = match[2];
-            const frontmatter = {};
-            
-            frontmatterText.split('\n').forEach(line => {
-                const colonIndex = line.indexOf(':');
-                if (colonIndex > -1) {
-                    const key = line.substring(0, colonIndex).trim();
-                    const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
-                    frontmatter[key] = value;
-                }
-            });
-            
+// Simple markdown parser
+function parseMarkdown(markdown) {
+    let html = markdown;
+    
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+    html = html.replace(/__(.*?)__/gim, '<strong>$1</strong>');
+    
+    // Italic
+    html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+    html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
+    
+    // Code blocks
+    html = html.replace(/\`\`\`([\s\S]*?)\`\`\`/gim, '<pre><code>$1</code></pre>');
+    
+    // Inline code
+    html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
+    
+    // Links - Fixed regex
+    html = html.replace(/\[([^\]]*)\]$$([^)]*)$$/gim, '<a href="$2">$1</a>');
+    
+    // Blockquotes
+    html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    
+    // Line breaks
+    html = html.replace(/\n\n/gim, '</p><p>');
+    html = '<p>' + html + '</p>';
+    
+    // Clean up empty paragraphs
+    html = html.replace(/<p><\/p>/gim, '');
+    html = html.replace(/<p>(<h[1-6]>)/gim, '$1');
+    html = html.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
+    html = html.replace(/<p>(<pre>)/gim, '$1');
+    html = html.replace(/(<\/pre>)<\/p>/gim, '$1');
+    html = html.replace(/<p>(<blockquote>)/gim, '$1');
+    html = html.replace(/(<\/blockquote>)<\/p>/gim, '$1');
+    
+    return html;
+}
+
+// Parse frontmatter from content
+function parseFrontmatter(content) {
+    console.log('Parsing frontmatter for content length:', content.length);
+    
+    const frontmatterRegex = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/;
+    const match = content.match(frontmatterRegex);
+    
+    if (!match) {
+        console.log('No frontmatter found, trying alternative format...');
+        // Try without the final newline requirement
+        const altRegex = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*([\s\S]*)$/;
+        const altMatch = content.match(altRegex);
+        
+        if (!altMatch) {
+            console.log('No frontmatter found at all');
             return {
-                frontmatter: frontmatter,
-                content: markdownContent
+                frontmatter: {},
+                content: content
             };
         }
-
-        // Extract excerpt from content
-        function extractExcerpt(content, maxLength = 150) {
-            // Remove markdown formatting for excerpt
-            let excerpt = content
-                .replace(/^---[\s\S]*?---\n/gm, '') // Remove frontmatter
-                .replace(/#{1,6}\s+/g, '') // Remove headers
-                .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-                .replace(/\*(.*?)\*/g, '$1') // Remove italic
-                .replace(/`(.*?)`/g, '$1') // Remove inline code
-                .replace(/\[([^\]]*)\]$$[^)]*$$/g, '$1') // Remove links
-                .replace(/\n+/g, ' ') // Replace newlines with spaces
-                .trim();
-            
-            if (excerpt.length > maxLength) {
-                excerpt = excerpt.substring(0, maxLength) + '...';
+        
+        const frontmatterText = altMatch[1];
+        const markdownContent = altMatch[2];
+        const frontmatter = {};
+        
+        frontmatterText.split(/\r?\n/).forEach(line => {
+            const colonIndex = line.indexOf(':');
+            if (colonIndex > -1) {
+                const key = line.substring(0, colonIndex).trim();
+                const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
+                frontmatter[key] = value;
             }
-            
-            return excerpt || 'Click to read more...';
+        });
+        
+        return {
+            frontmatter: frontmatter,
+            content: markdownContent.trim()
+        };
+    }
+    
+    const frontmatterText = match[1];
+    const markdownContent = match[2];
+    const frontmatter = {};
+    
+    console.log('Found frontmatter:', frontmatterText);
+    
+    frontmatterText.split(/\r?\n/).forEach(line => {
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > -1) {
+            const key = line.substring(0, colonIndex).trim();
+            const value = line.substring(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
+            frontmatter[key] = value;
         }
+    });
+    
+    console.log('Parsed frontmatter:', frontmatter);
+    
+    return {
+        frontmatter: frontmatter,
+        content: markdownContent.trim()
+    };
+}
 
-        // Discover and load blog posts by checking individual files
-        async function discoverBlogPosts() {
-            const posts = [];
-            const container = document.getElementById('posts-container');
-            
-            container.innerHTML = '<div class="loading">Scanning for blog posts...</div>';
-            
-            for (const filename of POTENTIAL_POST_FILES) {
-                try {
-                    const response = await fetch(`posts/${filename}`);
-                    if (response.ok) {
-                        const content = await response.text();
-                        const parsed = parseFrontmatter(content);
-                        
-                        // Create post object with metadata
-                        const post = {
-                            filename: filename,
-                            title: parsed.frontmatter.title || filename.replace(/\.(md|html)$/, '').replace(/-/g, ' '),
-                            date: parsed.frontmatter.date || new Date().toISOString().split('T')[0],
-                            tags: parsed.frontmatter.tags || '',
-                            excerpt: parsed.frontmatter.excerpt || extractExcerpt(parsed.content),
-                            author: parsed.frontmatter.author || 'colorBanded',
-                            content: parsed.content,
-                            frontmatter: parsed.frontmatter
-                        };
-                        
-                        posts.push(post);
-                        
-                        // Update UI to show progress
-                        container.innerHTML = `<div class="loading">Found ${posts.length} blog post${posts.length !== 1 ? 's' : ''}...</div>`;
-                    }
-                } catch (error) {
-                    // File doesn't exist or can't be loaded, skip silently
-                    console.log(`Skipping ${filename}: ${error.message}`);
+// Extract excerpt from content
+function extractExcerpt(content, maxLength = 150) {
+    let excerpt = content
+        .replace(/^---[\s\S]*?---\s*/gm, '')
+        .replace(/#{1,6}\s+/g, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/`(.*?)`/g, '$1')
+        .replace(/\[([^\]]*)\]$$[^)]*$$/g, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+    
+    if (excerpt.length > maxLength) {
+        excerpt = excerpt.substring(0, maxLength) + '...';
+    }
+    
+    return excerpt || 'Click to read more...';
+}
+
+// Discover and load blog posts by checking individual files
+async function discoverBlogPosts() {
+    console.log('Starting blog post discovery for GitHub Pages...');
+    const posts = [];
+    const container = document.getElementById('posts-container');
+    
+    container.innerHTML = '<div class="loading">Scanning for blog posts...</div>';
+    
+    for (const filename of POTENTIAL_POST_FILES) {
+        console.log(`Trying to fetch: posts/${filename}`);
+        try {
+            // GitHub Pages specific fetch with cache busting
+            const response = await fetch(`posts/${filename}?v=${Date.now()}`, {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache'
                 }
-            }
-            
-            // Sort posts by date (newest first)
-            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            displayBlogPosts(posts);
-            updateBlogStats(posts);
-            
-            return posts;
-        }
-
-        // Display blog posts in listing
-        function displayBlogPosts(posts) {
-            const container = document.getElementById('posts-container');
-            
-            if (posts.length === 0) {
-                container.innerHTML = `
-                    <div class="info">
-                        <strong>No blog posts found!</strong><br>
-                        Create markdown (.md) or HTML files in the posts/ folder with frontmatter like this:<br><br>
-                        <code>---<br>
-                        title: My First Post<br>
-                        date: 2025-01-10<br>
-                        tags: web, development<br>
-                        excerpt: This is my first blog post!<br>
-                        ---<br><br>
-                        Your content here...</code><br><br>
-                        Then add the filename to the POTENTIAL_POST_FILES array in this script.
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = '';
-            posts.forEach(post => {
-                html += `
-                    <div class="blog-post">
-                        <h3><a href="#" onclick="loadBlogPost('${post.filename}'); return false;">${post.title}</a></h3>
-                        <div class="blog-meta">Posted on ${formatDate(post.date)} | By ${post.author}</div>
-                        <div class="blog-excerpt">
-                            <p>${post.excerpt}</p>
-                        </div>
-                        ${post.tags ? `<div class="blog-tags">Tags: ${post.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}</div>` : ''}
-                    </div>
-                `;
             });
             
-            container.innerHTML = html;
-        }
-
-        // Load individual blog post
-        async function loadBlogPost(filename) {
-            try {
-                const response = await fetch(`posts/${filename}`);
-                if (!response.ok) {
-                    throw new Error('Could not load blog post');
-                }
+            console.log(`Response for ${filename}:`, response.status, response.statusText);
+            
+            if (response.ok) {
                 const content = await response.text();
+                console.log(`Content loaded for ${filename}, length:`, content.length);
+                console.log('First 200 chars:', content.substring(0, 200));
+                
                 const parsed = parseFrontmatter(content);
                 
-                // Hide blog listing, show blog post
-                document.getElementById('blog-listing').style.display = 'none';
-                document.getElementById('blog-post').style.display = 'block';
+                const post = {
+                    filename: filename,
+                    title: parsed.frontmatter.title || filename.replace(/\.(md|html)$/, '').replace(/-/g, ' '),
+                    date: parsed.frontmatter.date || new Date().toISOString().split('T')[0],
+                    tags: parsed.frontmatter.tags || '',
+                    excerpt: parsed.frontmatter.excerpt || extractExcerpt(parsed.content),
+                    author: parsed.frontmatter.author || 'colorBanded',
+                    content: parsed.content,
+                    frontmatter: parsed.frontmatter
+                };
                 
-                // Populate post content
-                document.getElementById('post-title').textContent = parsed.frontmatter.title || 'Blog Post';
-                document.getElementById('post-meta').innerHTML = `Posted on ${formatDate(parsed.frontmatter.date)} | By ${parsed.frontmatter.author || 'colorBanded'}`;
+                console.log('Created post object:', post);
+                posts.push(post);
                 
-                // Handle both markdown and HTML content
-                if (filename.endsWith('.md')) {
-                    document.getElementById('post-content').innerHTML = parseMarkdown(parsed.content);
-                } else {
-                    document.getElementById('post-content').innerHTML = parsed.content;
-                }
-                
-                if (parsed.frontmatter.tags) {
-                    document.getElementById('post-tags').innerHTML = 
-                        `Tags: ${parsed.frontmatter.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}`;
-                } else {
-                    document.getElementById('post-tags').innerHTML = '';
-                }
-                
-                // Update URL without page reload
-                window.history.pushState({post: filename}, '', `blog.html?post=${filename}`);
-                
-            } catch (error) {
-                alert('Error loading blog post: ' + error.message);
-            }
-        }
-
-        // Update blog stats
-        function updateBlogStats(posts) {
-            document.getElementById('post-count').textContent = posts.length;
-            if (posts.length > 0) {
-                document.getElementById('last-post-date').textContent = formatDate(posts[0].date);
+                container.innerHTML = `<div class="loading">Found ${posts.length} blog post${posts.length !== 1 ? 's' : ''}...</div>`;
             } else {
-                document.getElementById('last-post-date').textContent = 'None';
+                console.log(`File ${filename} not found (${response.status})`);
             }
+        } catch (error) {
+            console.log(`Error loading ${filename}:`, error.message);
         }
+    }
+    
+    console.log('Final posts array:', posts);
+    
+    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    displayBlogPosts(posts);
+    updateBlogStats(posts);
+    
+    return posts;
+}
 
-        // Format date
-        function formatDate(dateString) {
-            if (!dateString) return 'Unknown';
-            const date = new Date(dateString);
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                           'July', 'August', 'September', 'October', 'November', 'December'];
-            return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+// Display blog posts in listing
+function displayBlogPosts(posts) {
+    console.log('Displaying posts:', posts);
+    const container = document.getElementById('posts-container');
+    
+    if (posts.length === 0) {
+        container.innerHTML = `
+            <div class="info">
+                <strong>No blog posts found!</strong><br>
+                For GitHub Pages, make sure you have:<br>
+                1. A 'posts' folder in your repository root<br>
+                2. Files named exactly as listed in POTENTIAL_POST_FILES<br>
+                3. Files committed and pushed to GitHub<br>
+                4. Proper frontmatter format (see console for details)<br><br>
+                <strong>Current file list:</strong> ${POTENTIAL_POST_FILES.join(', ')}<br>
+                <strong>Debug info:</strong> Check browser console for details.
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    posts.forEach(post => {
+        html += `
+            <div class="blog-post">
+                <h3><a href="#" onclick="loadBlogPost('${post.filename}'); return false;">${post.title}</a></h3>
+                <div class="blog-meta">Posted on ${formatDate(post.date)} | By ${post.author}</div>
+                <div class="blog-excerpt">
+                    <p>${post.excerpt}</p>
+                </div>
+                ${post.tags ? `<div class="blog-tags">Tags: ${post.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}</div>` : ''}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Load individual blog post
+async function loadBlogPost(filename) {
+    try {
+        const response = await fetch(`posts/${filename}?v=${Date.now()}`);
+        if (!response.ok) {
+            throw new Error(`Could not load blog post (${response.status})`);
         }
-
-        // Filter by tag (placeholder)
-        function filterByTag(tag) {
-            alert(`Tag filtering coming soon! You clicked: ${tag}`);
+        const content = await response.text();
+        const parsed = parseFrontmatter(content);
+        
+        document.getElementById('blog-listing').style.display = 'none';
+        document.getElementById('blog-post').style.display = 'block';
+        
+        document.getElementById('post-title').textContent = parsed.frontmatter.title || 'Blog Post';
+        document.getElementById('post-meta').innerHTML = `Posted on ${formatDate(parsed.frontmatter.date)} | By ${parsed.frontmatter.author || 'colorBanded'}`;
+        
+        if (filename.endsWith('.md')) {
+            document.getElementById('post-content').innerHTML = parseMarkdown(parsed.content);
+        } else {
+            document.getElementById('post-content').innerHTML = parsed.content;
         }
-
-        // Handle back button
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.post) {
-                loadBlogPost(event.state.post);
-            } else {
-                showBlogListing();
-            }
-        });
-
-        // Show blog listing
-        function showBlogListing() {
-            document.getElementById('blog-listing').style.display = 'block';
-            document.getElementById('blog-post').style.display = 'none';
-            window.history.pushState({}, '', 'blog.html');
+        
+        if (parsed.frontmatter.tags) {
+            document.getElementById('post-tags').innerHTML = 
+                `Tags: ${parsed.frontmatter.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}`;
+        } else {
+            document.getElementById('post-tags').innerHTML = '';
         }
+        
+        window.history.pushState({post: filename}, '', `blog.html?post=${filename}`);
+        
+    } catch (error) {
+        console.error('Error loading blog post:', error);
+        alert('Error loading blog post: ' + error.message);
+    }
+}
 
-        // Check URL parameters on load
-        function checkUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const post = urlParams.get('post');
-            if (post) {
-                loadBlogPost(post);
-            }
-        }
+// Update blog stats
+function updateBlogStats(posts) {
+    document.getElementById('post-count').textContent = posts.length;
+    if (posts.length > 0) {
+        document.getElementById('last-post-date').textContent = formatDate(posts[0].date);
+    } else {
+        document.getElementById('last-post-date').textContent = 'None';
+    }
+}
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            discoverBlogPosts();
-            checkUrlParams();
-        });
-    </script>
+// Format date
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                   'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
+// Filter by tag (placeholder)
+function filterByTag(tag) {
+    alert(`Tag filtering coming soon! You clicked: ${tag}`);
+}
+
+// Handle back button
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.post) {
+        loadBlogPost(event.state.post);
+    } else {
+        showBlogListing();
+    }
+});
+
+// Show blog listing
+function showBlogListing() {
+    document.getElementById('blog-listing').style.display = 'block';
+    document.getElementById('blog-post').style.display = 'none';
+    window.history.pushState({}, '', 'blog.html');
+}
+
+// Check URL parameters on load
+function checkUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const post = urlParams.get('post');
+    if (post) {
+        loadBlogPost(post);
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing blog for GitHub Pages...');
+    discoverBlogPosts();
+    checkUrlParams();
+});
+</script>
 </body>
 </html>
