@@ -373,7 +373,7 @@ const POTENTIAL_POST_FILES = [
 
 console.log('Blog script loaded for GitHub Pages, looking for files:', POTENTIAL_POST_FILES);
 
-// Simple markdown parser
+// Simple markdown parser function
 function parseMarkdown(markdown) {
     let html = markdown;
     
@@ -391,13 +391,13 @@ function parseMarkdown(markdown) {
     html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
     
     // Code blocks
-    html = html.replace(/\`\`\`([\s\S]*?)\`\`\`/gim, '<pre><code>$1</code></pre>');
+    html = html.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
     
     // Inline code
     html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
     
-    // Links - Fixed regex
-    html = html.replace(/\[([^\]]*)\]$$([^)]*)$$/gim, '<a href="$2">$1</a>');
+    // Links - Fixed regex (was using $$ instead of parentheses)
+    html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>');
     
     // Blockquotes
     html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
@@ -484,12 +484,12 @@ function parseFrontmatter(content) {
 // Extract excerpt from content
 function extractExcerpt(content, maxLength = 150) {
     let excerpt = content
-        .replace(/^---[\s\S]*?---\s*/gm, '')
+        .replace(/^---[\s\S]*?---\s*/gm, '') // Fixed regex
         .replace(/#{1,6}\s+/g, '')
         .replace(/\*\*(.*?)\*\*/g, '$1')
         .replace(/\*(.*?)\*/g, '$1')
-        .replace(/`(.*?)`/g, '$1')
-        .replace(/\[([^\]]*)\]$$[^)]*$$/g, '$1')
+        .replace(/<pre><code>(.*?)<\/code><\/pre>/g, '$1')
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // Fixed regex
         .replace(/\s+/g, ' ')
         .trim();
     
@@ -505,6 +505,11 @@ async function discoverBlogPosts() {
     console.log('Starting blog post discovery for GitHub Pages...');
     const posts = [];
     const container = document.getElementById('posts-container');
+    
+    if (!container) {
+        console.error('posts-container element not found');
+        return [];
+    }
     
     container.innerHTML = '<div class="loading">Scanning for blog posts...</div>';
     
@@ -566,6 +571,11 @@ function displayBlogPosts(posts) {
     console.log('Displaying posts:', posts);
     const container = document.getElementById('posts-container');
     
+    if (!container) {
+        console.error('posts-container element not found');
+        return;
+    }
+    
     if (posts.length === 0) {
         container.innerHTML = `
             <div class="info">
@@ -609,26 +619,45 @@ async function loadBlogPost(filename) {
         const content = await response.text();
         const parsed = parseFrontmatter(content);
         
-        document.getElementById('blog-listing').style.display = 'none';
-        document.getElementById('blog-post').style.display = 'block';
+        const blogListing = document.getElementById('blog-listing');
+        const blogPost = document.getElementById('blog-post');
         
-        document.getElementById('post-title').textContent = parsed.frontmatter.title || 'Blog Post';
-        document.getElementById('post-meta').innerHTML = `Posted on ${formatDate(parsed.frontmatter.date)} | By ${parsed.frontmatter.author || 'colorBanded'}`;
-        
-        if (filename.endsWith('.md')) {
-            document.getElementById('post-content').innerHTML = parseMarkdown(parsed.content);
-        } else {
-            document.getElementById('post-content').innerHTML = parsed.content;
+        if (!blogListing || !blogPost) {
+            console.error('Required elements not found');
+            return;
         }
         
-        if (parsed.frontmatter.tags) {
-            document.getElementById('post-tags').innerHTML = 
-                `Tags: ${parsed.frontmatter.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}`;
-        } else {
-            document.getElementById('post-tags').innerHTML = '';
+        blogListing.style.display = 'none';
+        blogPost.style.display = 'block';
+        
+        const postTitle = document.getElementById('post-title');
+        const postMeta = document.getElementById('post-meta');
+        const postContent = document.getElementById('post-content');
+        const postTags = document.getElementById('post-tags');
+        
+        if (postTitle) postTitle.textContent = parsed.frontmatter.title || 'Blog Post';
+        if (postMeta) postMeta.innerHTML = `Posted on ${formatDate(parsed.frontmatter.date)} | By ${parsed.frontmatter.author || 'colorBanded'}`;
+        
+        if (postContent) {
+            if (filename.endsWith('.md')) {
+                postContent.innerHTML = parseMarkdown(parsed.content);
+            } else {
+                postContent.innerHTML = parsed.content;
+            }
         }
         
-        window.history.pushState({post: filename}, '', `blog.html?post=${filename}`);
+        if (postTags) {
+            if (parsed.frontmatter.tags) {
+                postTags.innerHTML = 
+                    `Tags: ${parsed.frontmatter.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}`;
+            } else {
+                postTags.innerHTML = '';
+            }
+        }
+        
+        if (window.history && window.history.pushState) {
+            window.history.pushState({post: filename}, '', `blog.html?post=${filename}`);
+        }
         
     } catch (error) {
         console.error('Error loading blog post:', error);
@@ -638,11 +667,16 @@ async function loadBlogPost(filename) {
 
 // Update blog stats
 function updateBlogStats(posts) {
-    document.getElementById('post-count').textContent = posts.length;
-    if (posts.length > 0) {
-        document.getElementById('last-post-date').textContent = formatDate(posts[0].date);
-    } else {
-        document.getElementById('last-post-date').textContent = 'None';
+    const postCount = document.getElementById('post-count');
+    const lastPostDate = document.getElementById('last-post-date');
+    
+    if (postCount) postCount.textContent = posts.length;
+    if (lastPostDate) {
+        if (posts.length > 0) {
+            lastPostDate.textContent = formatDate(posts[0].date);
+        } else {
+            lastPostDate.textContent = 'None';
+        }
     }
 }
 
@@ -650,8 +684,8 @@ function updateBlogStats(posts) {
 function formatDate(dateString) {
     if (!dateString) return 'Unknown';
     const date = new Date(dateString);
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                   'July', 'August', 'September', 'October', 'November', 'December'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
     return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
@@ -671,9 +705,15 @@ window.addEventListener('popstate', function(event) {
 
 // Show blog listing
 function showBlogListing() {
-    document.getElementById('blog-listing').style.display = 'block';
-    document.getElementById('blog-post').style.display = 'none';
-    window.history.pushState({}, '', 'blog.html');
+    const blogListing = document.getElementById('blog-listing');
+    const blogPost = document.getElementById('blog-post');
+    
+    if (blogListing) blogListing.style.display = 'block';
+    if (blogPost) blogPost.style.display = 'none';
+    
+    if (window.history && window.history.pushState) {
+        window.history.pushState({}, '', 'blog.html');
+    }
 }
 
 // Check URL parameters on load
