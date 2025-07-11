@@ -48,9 +48,10 @@ This is definitely a big issue when theres possibly personally identifiable info
 NOW ON TO THE ACTUAL PROJECT  PART
 
 NotMyMacro is a 15 key macro pad that i made in Fusion 360 and KiCAD
-![Macropad Fusion 360 Render](https://private-user-images.githubusercontent.com/207304171/460208182-bb5b95af-da29-481a-a2dc-5593240fcb83.png)
-![KiCad Mainboard Screenshot](https://private-user-images.githubusercontent.com/207304171/460207265-424a4fb9-f737-45d5-bc60-db2f73d22128.png)
-> [Top] Fusion Render, [Bottom] KiCad mainboard screenshot. Overall the project turned out pretty nice! 
+![Macropad Fusion 360 Render](https://ibb.co/27Y16WGd)
+
+![KiCad Mainboard Screenshot](https://ibb.co/ynm05tQ4)
+>Overall the project turned out pretty nice! 
 
 I had a lot of trouble getting the Geometry right for this but it all paid off. I used the RP2040 as the base as its easy to get started with, KiCAD is another program that's easy to get started with and loved using while making this.
 
