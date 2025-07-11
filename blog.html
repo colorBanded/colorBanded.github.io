@@ -467,7 +467,7 @@ function extractExcerpt(content, maxLength = 150) {
     return excerpt || 'Click to read more...';
 }
 
-// Get list of markdown files from GitHub API with better error handling
+// Get list of markdown files from GitHub API
 async function getPostFilesFromGitHub() {
     try {
         const apiUrl = `https://api.github.com/repos/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/contents/${GITHUB_REPO.postsFolder}`;
@@ -475,7 +475,8 @@ async function getPostFilesFromGitHub() {
         
         const response = await fetch(apiUrl, {
             headers: {
-                'Accept': 'application/vnd.github.v3+json'
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'GitHub-Pages-Blog-Script'
             }
         });
         
@@ -503,49 +504,42 @@ async function getPostFilesFromGitHub() {
     }
 }
 
-// Fallback method: try to discover files by attempting to load them
+// Fallback method: try to discover files by attempting to load them using raw.githubusercontent.com
 async function discoverFilesByAttempt() {
-    console.log('Attempting file discovery by probing...');
+    console.log('Attempting file discovery by probing common filenames...');
     
-    // Try fetching the posts directory directly (some servers list directory contents)
-    try {
-        const dirUrl = `https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/`;
-        const response = await fetch(dirUrl);
-        
-        if (response.ok) {
-            const html = await response.text();
-            // Look for markdown file links in the HTML
-            const linkMatches = html.match(/href="([^"]*\.md)"/g);
-            if (linkMatches) {
-                const files = linkMatches.map(match => match.match(/href="([^"]*\.md)"/)[1]);
-                console.log('Discovered files from directory listing:', files);
-                return files;
-            }
-        }
-    } catch (error) {
-        console.log('Directory listing approach failed:', error);
-    }
-    
-    // Last resort: try common filenames
+    // Common markdown filenames to try
     const commonFilenames = [
         'hello-world.md',
         'first-post.md',
         'welcome.md',
         'test.md',
-        'index.md'
+        'test-post.md',
+        'index.md',
+        'sample.md',
+        'example.md',
+        'getting-started.md',
+        'introduction.md'
     ];
     
     const foundFiles = [];
+    
     for (const filename of commonFilenames) {
         try {
-            const fileUrl = `https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/${filename}`;
-            const response = await fetch(fileUrl, { method: 'HEAD' });
+            const fileUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
+            console.log(`Checking: ${fileUrl}`);
+            
+            const response = await fetch(fileUrl);
             if (response.ok) {
-                foundFiles.push(filename);
-                console.log(`Found file: ${filename}`);
+                const content = await response.text();
+                if (content.trim().length > 0) {
+                    foundFiles.push(filename);
+                    console.log(`Found file: ${filename}`);
+                }
             }
         } catch (error) {
-            // File doesn't exist, continue
+            // File doesn't exist or other error, continue checking
+            console.log(`File ${filename} not found or error:`, error.message);
         }
     }
     
@@ -575,9 +569,10 @@ async function discoverBlogPosts() {
                     <strong>No blog posts found!</strong><br>
                     Make sure you have markdown (.md) files in your posts folder.<br>
                     <strong>Expected location:</strong> 
-                    <a href="https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/" target="_blank">
-                        https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/
-                    </a>
+                    <a href="https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}" target="_blank">
+                        https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}
+                    </a><br>
+                    <strong>Checked files:</strong> hello-world.md, first-post.md, welcome.md, test.md, test-post.md, index.md, sample.md, example.md, getting-started.md, introduction.md
                 </div>
             `;
             return [];
@@ -585,11 +580,11 @@ async function discoverBlogPosts() {
         
         container.innerHTML = `<div class="loading">Loading ${postFiles.length} blog post${postFiles.length !== 1 ? 's' : ''}...</div>`;
         
-        // Load each post
+        // Load each post using raw.githubusercontent.com
         const posts = [];
         for (const filename of postFiles) {
             try {
-                const fileUrl = `https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/${filename}`;
+                const fileUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
                 console.log(`Loading: ${fileUrl}`);
                 
                 const response = await fetch(fileUrl);
@@ -608,7 +603,7 @@ async function discoverBlogPosts() {
                 
                 const post = {
                     filename: filename,
-                    title: parsed.frontmatter.title || filename.replace(/\.md$/, '').replace(/-/g, ' '),
+                    title: parsed.frontmatter.title || filename.replace(/\.md$/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
                     date: parsed.frontmatter.date || new Date().toISOString().split('T')[0],
                     tags: parsed.frontmatter.tags || '',
                     excerpt: parsed.frontmatter.excerpt || extractExcerpt(parsed.content),
@@ -640,7 +635,11 @@ async function discoverBlogPosts() {
                 <div class="error">
                     <strong>Could not load any blog posts!</strong><br>
                     Found ${postFiles.length} markdown files but failed to load their content.<br>
-                    Check the browser console for detailed error messages.
+                    <strong>Troubleshooting:</strong><br>
+                    1. Make sure your markdown files are committed to GitHub<br>
+                    2. Check that files exist in: <code>${GITHUB_REPO.postsFolder}/</code><br>
+                    3. Verify repository is public or accessible<br>
+                    4. Check browser console for detailed error messages
                 </div>
             `;
         }
@@ -687,10 +686,10 @@ function displayBlogPosts(posts) {
     container.innerHTML = html;
 }
 
-// Load and display individual blog post
+// Load and display individual blog post using raw.githubusercontent.com
 async function loadBlogPost(filename) {
     try {
-        const fileUrl = `https://${GITHUB_REPO.owner}.github.io/${GITHUB_REPO.postsFolder}/${filename}`;
+        const fileUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
         console.log(`Loading post: ${fileUrl}`);
         
         const response = await fetch(fileUrl);
@@ -714,11 +713,13 @@ async function loadBlogPost(filename) {
         const postContent = document.getElementById('post-content');
         const postTags = document.getElementById('post-tags');
         
-        if (postTitle) postTitle.textContent = parsed.frontmatter.title || 'Blog Post';
+        if (postTitle) postTitle.textContent = parsed.frontmatter.title || filename.replace(/\.md$/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         if (postMeta) postMeta.innerHTML = `Posted on ${formatDate(parsed.frontmatter.date)} | By ${parsed.frontmatter.author || 'colorBanded'}`;
         if (postContent) postContent.innerHTML = parseMarkdown(parsed.content);
         if (postTags && parsed.frontmatter.tags) {
             postTags.innerHTML = `Tags: ${parsed.frontmatter.tags.split(',').map(tag => `<a href="#" onclick="filterByTag('${tag.trim()}'); return false;">${tag.trim()}</a>`).join(' ')}`;
+        } else if (postTags) {
+            postTags.innerHTML = '';
         }
         
         // Update URL
@@ -738,8 +739,12 @@ function updateBlogStats(posts) {
     const lastPostDate = document.getElementById('last-post-date');
     
     if (postCount) postCount.textContent = posts.length;
-    if (lastPostDate && posts.length > 0) {
-        lastPostDate.textContent = formatDate(posts[0].date);
+    if (lastPostDate) {
+        if (posts.length > 0) {
+            lastPostDate.textContent = formatDate(posts[0].date);
+        } else {
+            lastPostDate.textContent = 'None';
+        }
     }
 }
 
@@ -749,6 +754,8 @@ function formatDate(dateString) {
     
     try {
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        
         const months = ['January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'];
         return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
