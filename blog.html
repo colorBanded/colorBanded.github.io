@@ -499,19 +499,31 @@ function extractExcerpt(content, maxLength = 150) {
     return excerpt || 'Click to read more...';
 }
 
-// Get list of markdown files from GitHub API
+// Fixed getPostFilesFromGitHub function with better error handling
 async function getPostFilesFromGitHub() {
     try {
         const apiUrl = `https://api.github.com/repos/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/contents/${GITHUB_REPO.postsFolder}`;
         console.log('Fetching file list from GitHub API:', apiUrl);
         
         const response = await fetch(apiUrl);
+        console.log('GitHub API response status:', response.status);
+        
         if (!response.ok) {
+            // If GitHub API fails, try a fallback approach
+            if (response.status === 404) {
+                console.log('Posts folder not found via API, trying fallback');
+                return ['hello-world.md', 'test-post.md']; // Add your known files here
+            }
             throw new Error(`GitHub API request failed: ${response.status} ${response.statusText}`);
         }
         
         const files = await response.json();
-        console.log('GitHub API response:', files);
+        console.log('GitHub API response data:', files);
+        
+        if (!Array.isArray(files)) {
+            console.error('GitHub API returned non-array:', files);
+            return [];
+        }
         
         // Filter for markdown files
         const markdownFiles = files
@@ -524,11 +536,12 @@ async function getPostFilesFromGitHub() {
     } catch (error) {
         console.error('Error fetching files from GitHub API:', error);
         // Fallback to manual list if API fails
-        return ['hello-world.md']; // At least try the file we know exists
+        console.log('Using fallback file list');
+        return ['hello-world.md']; // Add your known files here
     }
 }
 
-// Discover and load blog posts by checking individual files
+// Fixed discoverBlogPosts function with better error handling
 async function discoverBlogPosts() {
     console.log('Starting blog post discovery for GitHub Pages...');
     
@@ -542,86 +555,122 @@ async function discoverBlogPosts() {
     
     container.innerHTML = '<div class="loading">Discovering blog posts from GitHub...</div>';
     
-    // Get list of files from GitHub API
-    const postFiles = await getPostFilesFromGitHub();
-    
-    if (postFiles.length === 0) {
-        console.log('No markdown files found in posts folder');
+    try {
+        // Get list of files from GitHub API
+        const postFiles = await getPostFilesFromGitHub();
+        
+        if (postFiles.length === 0) {
+            console.log('No markdown files found in posts folder');
+            container.innerHTML = `
+                <div class="info">
+                    <strong>No blog posts found!</strong><br>
+                    Make sure you have markdown (.md) files in your posts folder:<br>
+                    <a href="https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}" target="_blank">
+                        https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}
+                    </a>
+                </div>
+            `;
+            return [];
+        }
+        
+        container.innerHTML = `<div class="loading">Loading ${postFiles.length} blog post${postFiles.length !== 1 ? 's' : ''}...</div>`;
+        
+        // Process each file
+        for (const filename of postFiles) {
+            console.log(`Processing file: ${filename}`);
+            
+            try {
+                // Fetch from your own domain (GitHub Pages site) - CORS fix
+                const currentDomain = window.location.origin;
+                const fileUrl = `${currentDomain}/${GITHUB_REPO.postsFolder}/${filename}`;
+                console.log(`Fetching from local domain: ${fileUrl}`);
+                
+                const response = await fetch(fileUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                console.log(`Response for ${filename}:`, response.status, response.statusText);
+                
+                if (response.ok) {
+                    const content = await response.text();
+                    console.log(`Content loaded for ${filename}, length:`, content.length);
+                    
+                    if (content.trim().length === 0) {
+                        console.log(`File ${filename} is empty, skipping`);
+                        continue;
+                    }
+                    
+                    const parsed = parseFrontmatter(content);
+                    
+                    const post = {
+                        filename: filename,
+                        title: parsed.frontmatter.title || filename.replace(/\.(md|html)$/, '').replace(/-/g, ' '),
+                        date: parsed.frontmatter.date || new Date().toISOString().split('T')[0],
+                        tags: parsed.frontmatter.tags || '',
+                        excerpt: parsed.frontmatter.excerpt || extractExcerpt(parsed.content),
+                        author: parsed.frontmatter.author || 'colorBanded',
+                        content: parsed.content,
+                        frontmatter: parsed.frontmatter
+                    };
+                    
+                    console.log('Created post object:', post);
+                    posts.push(post);
+                    
+                    // Update loading message
+                    container.innerHTML = `<div class="loading">Loaded ${posts.length} of ${postFiles.length} blog posts...</div>`;
+                } else {
+                    console.log(`File ${filename} not found (${response.status})`);
+                }
+            } catch (error) {
+                console.error(`Error loading ${filename}:`, error);
+            }
+        }
+        
+        console.log('Final posts array:', posts);
+        console.log('Posts count:', posts.length);
+        
+        // Sort posts by date (newest first)
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Display posts - this is the key fix
+        if (posts.length > 0) {
+            console.log('Calling displayBlogPosts with', posts.length, 'posts');
+            displayBlogPosts(posts);
+            updateBlogStats(posts);
+        } else {
+            console.log('No posts loaded, showing empty state');
+            container.innerHTML = `
+                <div class="info">
+                    <strong>No blog posts could be loaded!</strong><br>
+                    Found ${postFiles.length} markdown files but couldn't load any content.<br>
+                    Check the browser console for detailed error messages.
+                </div>
+            `;
+        }
+        
+        return posts;
+        
+    } catch (error) {
+        console.error('Error in discoverBlogPosts:', error);
         container.innerHTML = `
-            <div class="info">
-                <strong>No blog posts found!</strong><br>
-                Make sure you have markdown (.md) files in your posts folder:<br>
-                <a href="https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}" target="_blank">
-                    https://github.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/tree/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}
-                </a>
+            <div class="error">
+                <strong>Error loading blog posts:</strong><br>
+                ${error.message}<br>
+                Check the browser console for more details.
             </div>
         `;
         return [];
     }
-    
-    container.innerHTML = `<div class="loading">Loading ${postFiles.length} blog post${postFiles.length !== 1 ? 's' : ''}...</div>`;
-    
-    for (const filename of postFiles) {
-        console.log(`Processing file: ${filename}`);
-        
-        try {
-            // Fetch from your own domain (GitHub Pages site) - CORS fix
-            const currentDomain = window.location.origin;
-            const fileUrl = `${currentDomain}/${GITHUB_REPO.postsFolder}/${filename}`;
-            console.log(`Fetching from local domain: ${fileUrl}`);
-            
-            const response = await fetch(fileUrl, {
-                method: 'GET',
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            });
-            
-            console.log(`Response for ${filename}:`, response.status, response.statusText);
-            
-            if (response.ok) {
-                const content = await response.text();
-                console.log(`Content loaded for ${filename}, length:`, content.length);
-                console.log('First 200 chars:', content.substring(0, 200));
-                
-                const parsed = parseFrontmatter(content);
-                
-                const post = {
-                    filename: filename,
-                    title: parsed.frontmatter.title || filename.replace(/\.(md|html)$/, '').replace(/-/g, ' '),
-                    date: parsed.frontmatter.date || new Date().toISOString().split('T')[0],
-                    tags: parsed.frontmatter.tags || '',
-                    excerpt: parsed.frontmatter.excerpt || extractExcerpt(parsed.content),
-                    author: parsed.frontmatter.author || 'colorBanded',
-                    content: parsed.content,
-                    frontmatter: parsed.frontmatter
-                };
-                
-                console.log('Created post object:', post);
-                posts.push(post);
-                
-                container.innerHTML = `<div class="loading">Found ${posts.length} blog post${posts.length !== 1 ? 's' : ''}...</div>`;
-            } else {
-                console.log(`File ${filename} not found (${response.status})`);
-            }
-        } catch (error) {
-            console.log(`Error loading ${filename}:`, error.message);
-        }
-    }
-    
-    console.log('Final posts array:', posts);
-    
-    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    displayBlogPosts(posts);
-    updateBlogStats(posts);
-    
-    return posts;
 }
 
-// Display blog posts in listing
+// Fixed displayBlogPosts function
 function displayBlogPosts(posts) {
     console.log('Displaying posts:', posts);
+    console.log('Posts length:', posts ? posts.length : 'posts is null/undefined');
+    
     const container = document.getElementById('posts-container');
     
     if (!container) {
@@ -629,7 +678,9 @@ function displayBlogPosts(posts) {
         return;
     }
     
-    if (posts.length === 0) {
+    // Fix: Better check for posts array
+    if (!posts || !Array.isArray(posts) || posts.length === 0) {
+        console.log('No posts to display - posts:', posts);
         container.innerHTML = `
             <div class="info">
                 <strong>No blog posts found!</strong><br>
@@ -647,8 +698,10 @@ function displayBlogPosts(posts) {
         return;
     }
     
+    console.log('Building HTML for', posts.length, 'posts');
     let html = '';
-    posts.forEach(post => {
+    posts.forEach((post, index) => {
+        console.log(`Processing post ${index}:`, post.title);
         html += `
             <div class="blog-post">
                 <h3><a href="#" onclick="loadBlogPost('${post.filename}'); return false;">${post.title}</a></h3>
@@ -661,7 +714,9 @@ function displayBlogPosts(posts) {
         `;
     });
     
+    console.log('Setting container HTML, length:', html.length);
     container.innerHTML = html;
+    console.log('Container updated successfully');
 }
 
 // Load individual blog post
