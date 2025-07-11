@@ -370,109 +370,244 @@ const GITHUB_REPO = {
 
 console.log('Blog script loaded for GitHub Pages, will auto-discover files from:', `${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.postsFolder}`);
 
-// Simple markdown parser function with image and mermaid support
+// Improved markdown parser function with better image and mermaid support
 function parseMarkdown(markdown) {
     let html = markdown;
     
-    // First, extract and process mermaid blocks
+    // Step 1: Extract and preserve mermaid blocks first to prevent interference
     const mermaidBlocks = [];
+    const mermaidPlaceholders = [];
+    
     html = html.replace(/```mermaid\n([\s\S]*?)\n```/gim, (match, content) => {
         const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const placeholder = `__MERMAID_PLACEHOLDER_${mermaidBlocks.length}__`;
+        
         mermaidBlocks.push({
             id: id,
-            content: content.trim()
+            content: content.trim(),
+            placeholder: placeholder
         });
-        return `<div class="mermaid-container"><div class="mermaid" id="${id}">${content.trim()}</div></div>`;
+        mermaidPlaceholders.push(placeholder);
+        
+        return placeholder;
     });
     
-    // Headers
-    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    // Step 2: Extract and preserve code blocks to prevent interference
+    const codeBlocks = [];
+    const codePlaceholders = [];
     
-    // Images with alt text and optional titles
-    html = html.replace(/!\[([^\]]*)\]\(([^)]*?)(?:\s+"([^"]*)")?\)/gim, (match, alt, src, title) => {
-        const titleAttr = title ? ` title="${title}"` : '';
-        const caption = title || alt;
+    html = html.replace(/```(\w+)?\n([\s\S]*?)\n```/gim, (match, language, content) => {
+        const placeholder = `__CODE_PLACEHOLDER_${codeBlocks.length}__`;
         
-        // Check if it's a relative path and convert to GitHub raw URL
-        let imageSrc = src;
-        if (!src.startsWith('http') && !src.startsWith('data:')) {
-            imageSrc = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${src}`;
+        codeBlocks.push({
+            language: language || '',
+            content: content,
+            placeholder: placeholder
+        });
+        codePlaceholders.push(placeholder);
+        
+        return placeholder;
+    });
+    
+    // Step 3: Extract and preserve inline code to prevent interference
+    const inlineCodeBlocks = [];
+    const inlineCodePlaceholders = [];
+    
+    html = html.replace(/`([^`\n]+)`/gim, (match, content) => {
+        const placeholder = `__INLINE_CODE_PLACEHOLDER_${inlineCodeBlocks.length}__`;
+        
+        inlineCodeBlocks.push({
+            content: content,
+            placeholder: placeholder
+        });
+        inlineCodePlaceholders.push(placeholder);
+        
+        return placeholder;
+    });
+    
+    // Step 4: Process images with better handling
+    html = html.replace(/!\[([^\]]*)\]\(([^)]*?)(?:\s+"([^"]*)")?\)/gim, (match, alt, src, title) => {
+        // Clean up alt text and title
+        const cleanAlt = alt.trim();
+        const cleanTitle = title ? title.trim() : '';
+        
+        // Handle relative paths by converting to GitHub raw URL
+        let imageSrc = src.trim();
+        if (!imageSrc.startsWith('http') && !imageSrc.startsWith('data:') && !imageSrc.startsWith('/')) {
+            imageSrc = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${imageSrc}`;
         }
         
-        let imageHtml = `<img src="${imageSrc}" alt="${alt}"${titleAttr} loading="lazy">`;
+        // Build image HTML with proper attributes
+        const titleAttr = cleanTitle ? ` title="${cleanTitle.replace(/"/g, '&quot;')}"` : '';
+        const altAttr = cleanAlt ? ` alt="${cleanAlt.replace(/"/g, '&quot;')}"` : ' alt=""';
+        
+        let imageHtml = `<img src="${imageSrc}"${altAttr}${titleAttr} loading="lazy">`;
+        
+        // Add caption if title or alt text exists
+        const caption = cleanTitle || cleanAlt;
         if (caption) {
             imageHtml += `<div class="image-caption">${caption}</div>`;
         }
+        
         return imageHtml;
     });
     
-    // Bold
+    // Step 5: Process headers
+    html = html.replace(/^#{6}\s+(.*)$/gim, '<h6>$1</h6>');
+    html = html.replace(/^#{5}\s+(.*)$/gim, '<h5>$1</h5>');
+    html = html.replace(/^#{4}\s+(.*)$/gim, '<h4>$1</h4>');
+    html = html.replace(/^#{3}\s+(.*)$/gim, '<h3>$1</h3>');
+    html = html.replace(/^#{2}\s+(.*)$/gim, '<h2>$1</h2>');
+    html = html.replace(/^#{1}\s+(.*)$/gim, '<h1>$1</h1>');
+    
+    // Step 6: Process blockquotes (handle multi-line blockquotes)
+    html = html.replace(/^>\s*(.*)$/gim, '<blockquote-line>$1</blockquote-line>');
+    html = html.replace(/(<blockquote-line>.*<\/blockquote-line>(?:\s*<blockquote-line>.*<\/blockquote-line>)*)/gim, 
+        (match) => {
+            const content = match.replace(/<blockquote-line>(.*?)<\/blockquote-line>/gim, '$1').replace(/\s*\n\s*/g, '<br>');
+            return `<blockquote>${content}</blockquote>`;
+        });
+    
+    // Step 7: Process bold and italic (be more careful with order)
+    html = html.replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>');
+    html = html.replace(/\_\_\_(.*?)\_\_\_/gim, '<strong><em>$1</em></strong>');
     html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-    html = html.replace(/__(.*?)__/gim, '<strong>$1</strong>');
+    html = html.replace(/\_\_(.*?)\_\_/gim, '<strong>$1</strong>');
+    html = html.replace(/\*((?:[^*]|\*(?!\*))*)\*/gim, '<em>$1</em>');
+    html = html.replace(/\_((?:[^_]|\_(?!\_))*?)\_/gim, '<em>$1</em>');
     
-    // Italic
-    html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-    html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
-    
-    // Code blocks (but not mermaid blocks, which were already processed)
-    html = html.replace(/```(?!mermaid)([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
-    
-    // Inline code
-    html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
-    
-    // Links
+    // Step 8: Process links
     html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>');
     
-    // Blockquotes
-    html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    // Step 9: Process line breaks and paragraphs
+    // First, normalize line endings
+    html = html.replace(/\r\n/g, '\n');
+    html = html.replace(/\r/g, '\n');
     
-    // Line breaks
-    html = html.replace(/\n\n/gim, '</p><p>');
-    html = '<p>' + html + '</p>';
+    // Split into blocks
+    const blocks = html.split(/\n\s*\n/);
+    const processedBlocks = [];
     
-    // Clean up empty paragraphs
-    html = html.replace(/<p><\/p>/gim, '');
-    html = html.replace(/<p>(<h[1-6]>)/gim, '$1');
-    html = html.replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
-    html = html.replace(/<p>(<pre>)/gim, '$1');
-    html = html.replace(/(<\/pre>)<\/p>/gim, '$1');
-    html = html.replace(/<p>(<blockquote>)/gim, '$1');
-    html = html.replace(/(<\/blockquote>)<\/p>/gim, '$1');
-    html = html.replace(/<p>(<div class="mermaid-container">)/gim, '$1');
-    html = html.replace(/(<\/div>)<\/p>/gim, '$1');
-    html = html.replace(/<p>(<img)/gim, '$1');
-    html = html.replace(/(caption">.*?<\/div>)<\/p>/gim, '$1');
+    blocks.forEach(block => {
+        block = block.trim();
+        if (!block) return;
+        
+        // Check if block is already wrapped in HTML tags
+        if (block.match(/^<(h[1-6]|blockquote|img|div)/i)) {
+            processedBlocks.push(block);
+        } else {
+            // Convert single line breaks to <br> within paragraphs
+            const paragraphContent = block.replace(/\n/g, '<br>');
+            processedBlocks.push(`<p>${paragraphContent}</p>`);
+        }
+    });
+    
+    html = processedBlocks.join('\n\n');
+    
+    // Step 10: Restore inline code blocks
+    inlineCodeBlocks.forEach(codeBlock => {
+        html = html.replace(codeBlock.placeholder, `<code>${codeBlock.content}</code>`);
+    });
+    
+    // Step 11: Restore code blocks
+    codeBlocks.forEach(codeBlock => {
+        const languageClass = codeBlock.language ? ` class="language-${codeBlock.language}"` : '';
+        html = html.replace(codeBlock.placeholder, `<pre><code${languageClass}>${codeBlock.content}</code></pre>`);
+    });
+    
+    // Step 12: Restore mermaid blocks
+    mermaidBlocks.forEach(mermaidBlock => {
+        html = html.replace(mermaidBlock.placeholder, 
+            `<div class="mermaid-container"><div class="mermaid" id="${mermaidBlock.id}">${mermaidBlock.content}</div></div>`);
+    });
+    
+    // Step 13: Clean up HTML formatting issues
+    
+    // Remove empty paragraphs
+    html = html.replace(/<p>\s*<\/p>/gim, '');
+    
+    // Fix paragraphs around block elements
+    html = html.replace(/<p>\s*(<h[1-6]>)/gim, '$1');
+    html = html.replace(/(<\/h[1-6]>)\s*<\/p>/gim, '$1');
+    html = html.replace(/<p>\s*(<blockquote>)/gim, '$1');
+    html = html.replace(/(<\/blockquote>)\s*<\/p>/gim, '$1');
+    html = html.replace(/<p>\s*(<pre>)/gim, '$1');
+    html = html.replace(/(<\/pre>)\s*<\/p>/gim, '$1');
+    html = html.replace(/<p>\s*(<div)/gim, '$1');
+    html = html.replace(/(<\/div>)\s*<\/p>/gim, '$1');
+    
+    // Fix images wrapped in paragraphs
+    html = html.replace(/<p>\s*(<img[^>]*>)/gim, '$1');
+    html = html.replace(/(<img[^>]*>)\s*<\/p>/gim, '$1');
+    html = html.replace(/<p>\s*(<div class="image-caption">)/gim, '$1');
+    html = html.replace(/(<\/div>)\s*<\/p>/gim, '$1');
+    
+    // Fix multiple consecutive <br> tags
+    html = html.replace(/(<br>\s*){3,}/gim, '<br><br>');
     
     return html;
 }
 
-// Render Mermaid diagrams after content is loaded
+// Enhanced Mermaid rendering function with better error handling
 function renderMermaidDiagrams() {
     const mermaidElements = document.querySelectorAll('.mermaid');
     
-    mermaidElements.forEach(async (element) => {
+    if (mermaidElements.length === 0) {
+        console.log('No mermaid elements found');
+        return;
+    }
+    
+    console.log(`Found ${mermaidElements.length} mermaid diagrams to render`);
+    
+    mermaidElements.forEach(async (element, index) => {
         try {
             const graphDefinition = element.textContent.trim();
-            if (graphDefinition) {
-                // Clear the element
-                element.innerHTML = '';
-                
-                // Generate unique ID if not present
-                if (!element.id) {
-                    element.id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                }
-                
-                // Render the diagram
-                const { svg } = await mermaid.render(element.id + '-svg', graphDefinition);
-                element.innerHTML = svg;
-                
-                console.log(`Rendered Mermaid diagram: ${element.id}`);
+            
+            if (!graphDefinition) {
+                console.warn(`Mermaid element ${index} is empty`);
+                return;
             }
+            
+            console.log(`Rendering mermaid diagram ${index}:`, graphDefinition.substring(0, 50) + '...');
+            
+            // Generate unique ID if not present
+            if (!element.id) {
+                element.id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            }
+            
+            // Clear the element first
+            element.innerHTML = '';
+            
+            // Add loading indicator
+            element.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Rendering diagram...</div>';
+            
+            // Render the diagram with timeout
+            const renderPromise = mermaid.render(element.id + '-svg', graphDefinition);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Mermaid render timeout')), 10000)
+            );
+            
+            const { svg } = await Promise.race([renderPromise, timeoutPromise]);
+            
+            // Insert the SVG
+            element.innerHTML = svg;
+            
+            console.log(`Successfully rendered mermaid diagram: ${element.id}`);
+            
         } catch (error) {
-            console.error('Error rendering Mermaid diagram:', error);
-            element.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
+            console.error(`Error rendering mermaid diagram ${index}:`, error);
+            
+            // Show user-friendly error
+            element.innerHTML = `
+                <div class="mermaid-error">
+                    <strong>Error rendering diagram:</strong><br>
+                    ${error.message}<br>
+                    <details style="margin-top: 5px;">
+                        <summary style="cursor: pointer; color: #666;">Show diagram source</summary>
+                        <pre style="margin-top: 5px; padding: 5px; background: #f5f5f5; border-radius: 3px; font-size: 10px;">${element.textContent.trim()}</pre>
+                    </details>
+                </div>
+            `;
         }
     });
 }
@@ -508,22 +643,54 @@ function parseFrontmatter(content) {
     };
 }
 
-// Extract excerpt from content
+// Enhanced excerpt extraction with better handling
 function extractExcerpt(content, maxLength = 150) {
-    let excerpt = content
-        .replace(/^---[\s\S]*?---\s*/gm, '')
-        .replace(/#{1,6}\s+/g, '')
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .replace(/\*(.*?)\*/g, '$1')
-        .replace(/<pre><code>(.*?)<\/code><\/pre>/g, '$1')
-        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '') // Remove images from excerpt
-        .replace(/```mermaid[\s\S]*?```/g, '') // Remove mermaid blocks from excerpt
-        .replace(/\s+/g, ' ')
-        .trim();
+    let excerpt = content;
     
+    // Remove frontmatter
+    excerpt = excerpt.replace(/^---[\s\S]*?---\s*/gm, '');
+    
+    // Remove mermaid blocks
+    excerpt = excerpt.replace(/```mermaid[\s\S]*?```/gim, '');
+    
+    // Remove code blocks
+    excerpt = excerpt.replace(/```[\s\S]*?```/gim, '');
+    
+    // Remove inline code
+    excerpt = excerpt.replace(/`[^`\n]+`/gim, '');
+    
+    // Remove images
+    excerpt = excerpt.replace(/!\[([^\]]*)\]\([^)]*\)/gim, '');
+    
+    // Remove headers
+    excerpt = excerpt.replace(/^#{1,6}\s+/gm, '');
+    
+    // Remove links but keep text
+    excerpt = excerpt.replace(/\[([^\]]*)\]\([^)]*\)/gim, '$1');
+    
+    // Remove bold/italic markers
+    excerpt = excerpt.replace(/\*\*\*(.*?)\*\*\*/gim, '$1');
+    excerpt = excerpt.replace(/\*\*(.*?)\*\*/gim, '$1');
+    excerpt = excerpt.replace(/\*(.*?)\*/gim, '$1');
+    excerpt = excerpt.replace(/\_\_\_(.*?)\_\_\_/gim, '$1');
+    excerpt = excerpt.replace(/\_\_(.*?)\_\_/gim, '$1');
+    excerpt = excerpt.replace(/\_(.*?)\_/gim, '$1');
+    
+    // Remove blockquotes
+    excerpt = excerpt.replace(/^>\s*/gm, '');
+    
+    // Clean up whitespace
+    excerpt = excerpt.replace(/\s+/g, ' ').trim();
+    
+    // Truncate if too long
     if (excerpt.length > maxLength) {
-        excerpt = excerpt.substring(0, maxLength) + '...';
+        excerpt = excerpt.substring(0, maxLength).trim();
+        // Try to break at word boundary
+        const lastSpace = excerpt.lastIndexOf(' ');
+        if (lastSpace > maxLength * 0.8) {
+            excerpt = excerpt.substring(0, lastSpace);
+        }
+        excerpt += '...';
     }
     
     return excerpt || 'Click to read more...';
