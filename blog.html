@@ -565,11 +565,12 @@ async function discoverBlogPosts() {
         console.log(`Processing file: ${filename}`);
         
         try {
-            // Fetch directly from GitHub's raw content URL - THIS IS THE KEY FIX
-            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
-            console.log(`Fetching from GitHub raw URL: ${rawUrl}`);
+            // Fetch from your own domain (GitHub Pages site) - CORS fix
+            const currentDomain = window.location.origin;
+            const fileUrl = `${currentDomain}/${GITHUB_REPO.postsFolder}/${filename}`;
+            console.log(`Fetching from local domain: ${fileUrl}`);
             
-            const response = await fetch(rawUrl, {
+            const response = await fetch(fileUrl, {
                 method: 'GET',
                 headers: {
                     'Cache-Control': 'no-cache'
@@ -666,11 +667,12 @@ function displayBlogPosts(posts) {
 // Load individual blog post
 async function loadBlogPost(filename) {
     try {
-        // Fetch directly from GitHub's raw content URL - SAME FIX HERE
-        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
-        console.log(`Loading post from GitHub raw URL: ${rawUrl}`);
+        // Fetch from your own domain (GitHub Pages site) - CORS fix
+        const currentDomain = window.location.origin;
+        const fileUrl = `${currentDomain}/${GITHUB_REPO.postsFolder}/${filename}`;
+        console.log(`Loading post from local domain: ${fileUrl}`);
         
-        const response = await fetch(rawUrl);
+        const response = await fetch(fileUrl);
         if (!response.ok) {
             throw new Error(`Could not load blog post (${response.status})`);
         }
