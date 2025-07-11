@@ -395,7 +395,7 @@ function parseMarkdown(markdown) {
     // Inline code
     html = html.replace(/`(.*?)`/gim, '<code>$1</code>');
     
-    // Links - Fixed regex (was using $$ instead of parentheses)
+    // Links
     html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>');
     
     // Blockquotes
@@ -483,12 +483,12 @@ function parseFrontmatter(content) {
 // Extract excerpt from content
 function extractExcerpt(content, maxLength = 150) {
     let excerpt = content
-        .replace(/^---[\s\S]*?---\s*/gm, '') // Fixed regex
+        .replace(/^---[\s\S]*?---\s*/gm, '')
         .replace(/#{1,6}\s+/g, '')
         .replace(/\*\*(.*?)\*\*/g, '$1')
         .replace(/\*(.*?)\*/g, '$1')
         .replace(/<pre><code>(.*?)<\/code><\/pre>/g, '$1')
-        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // Fixed regex
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
         .replace(/\s+/g, ' ')
         .trim();
     
@@ -531,8 +531,6 @@ async function getPostFilesFromGitHub() {
 // Discover and load blog posts by checking individual files
 async function discoverBlogPosts() {
     console.log('Starting blog post discovery for GitHub Pages...');
-    console.log('Current URL:', window.location.href);
-    console.log('Base URL:', window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/'));
     
     const posts = [];
     const container = document.getElementById('posts-container');
@@ -567,7 +565,7 @@ async function discoverBlogPosts() {
         console.log(`Processing file: ${filename}`);
         
         try {
-            // Fetch directly from GitHub's raw content URL
+            // Fetch directly from GitHub's raw content URL - THIS IS THE KEY FIX
             const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
             console.log(`Fetching from GitHub raw URL: ${rawUrl}`);
             
@@ -579,7 +577,6 @@ async function discoverBlogPosts() {
             });
             
             console.log(`Response for ${filename}:`, response.status, response.statusText);
-            console.log(`Response URL: ${response.url}`);
             
             if (response.ok) {
                 const content = await response.text();
@@ -669,7 +666,7 @@ function displayBlogPosts(posts) {
 // Load individual blog post
 async function loadBlogPost(filename) {
     try {
-        // Fetch directly from GitHub's raw content URL
+        // Fetch directly from GitHub's raw content URL - SAME FIX HERE
         const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${GITHUB_REPO.postsFolder}/${filename}`;
         console.log(`Loading post from GitHub raw URL: ${rawUrl}`);
         
