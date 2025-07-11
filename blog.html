@@ -12,6 +12,7 @@ body {
 	font-size: 12px;
 	line-height: 1.4;
 }
+
 #container {
 	width: 960px;
 	margin: 0 auto;
@@ -19,6 +20,7 @@ body {
 	background-color: #ffffff;
 	position: relative;
 }
+
 #container:before, #container:after {
 	content: "";
 	position: absolute;
@@ -29,20 +31,24 @@ body {
 	height: 20px;
 	box-shadow: 0 15px 10px #999999;
 }
+
 #container:before {
 	left: 10px;
 	transform: rotate(-3deg);
 }
+
 #container:after {
 	right: 10px;
 	transform: rotate(3deg);
 }
+
 #shadow-container {
 	width: 980px;
 	margin: 0 auto;
 	background: url('data:image/gif;base64,R0lGODlhZAAFAIAAAP///8zMzCH5BAAAAAAALAAAAABkAAUAAAIPhI+py+0Po5y02ouz3rwXADs=') repeat-y center;
 	padding: 0 10px;
 }
+
 #header {
 	background: #e0e8f0;
 	background-image: url('data:image/gif;base64,R0lGODlhAQAcAIAAAODg4P///yH5BAAAAAAALAAAAAABABwAAAIIhI+py+0PYysAOw==');
@@ -50,6 +56,7 @@ body {
 	height: 80px;
 	padding: 10px;
 }
+
 #header h1 {
 	margin: 0;
 	padding: 0;
@@ -57,11 +64,13 @@ body {
 	color: #333333;
 	font-weight: normal;
 }
+
 #header p {
 	margin: 5px 0 0 0;
 	font-size: 11px;
 	color: #666666;
 }
+
 #navigation {
 	float: left;
 	width: 180px;
@@ -70,14 +79,17 @@ body {
 	padding: 10px;
 	min-height: 500px;
 }
+
 #navigation ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 }
+
 #navigation li {
 	margin-bottom: 5px;
 }
+
 #navigation a {
 	display: block;
 	padding: 5px;
@@ -87,25 +99,30 @@ body {
 	text-decoration: none;
 	font-weight: bold;
 }
+
 #navigation a:hover {
 	background-color: #e0e0e0;
 	border-color: #bbbbbb;
 	text-decoration: underline;
 }
+
 #navigation a.current {
 	background-color: #d0d8e0;
 	border-color: #999999;
 	color: #003366;
 }
+
 #content {
 	margin-left: 200px;
 	padding: 15px;
 }
+
 .section {
 	margin-bottom: 20px;
 	border: 1px solid #dddddd;
 	background-color: #ffffff;
 }
+
 .section-header {
 	background-color: #f0f0f0;
 	border-bottom: 1px solid #dddddd;
@@ -113,62 +130,76 @@ body {
 	font-weight: bold;
 	color: #333333;
 }
+
 .section-content {
 	padding: 10px;
 }
+
 .blog-post {
 	margin-bottom: 20px;
 	padding-bottom: 15px;
 	border-bottom: 1px dotted #cccccc;
 }
+
 .blog-post:last-child {
 	border-bottom: none;
 }
+
 .blog-post h3 {
 	margin-top: 0;
 	margin-bottom: 5px;
 	color: #0066cc;
 }
+
 .blog-post h3 a {
 	color: #0066cc;
 	text-decoration: none;
 }
+
 .blog-post h3 a:hover {
 	text-decoration: underline;
 }
+
 .blog-meta {
 	font-size: 11px;
 	color: #666666;
 	font-style: italic;
 	margin-bottom: 8px;
 }
+
 .blog-excerpt {
 	margin-bottom: 8px;
 }
+
 .blog-tags {
 	font-size: 10px;
 	color: #999999;
 }
+
 .blog-tags a {
 	color: #0066cc;
 	text-decoration: none;
 	margin-right: 5px;
 }
+
 .blog-tags a:hover {
 	text-decoration: underline;
 }
+
 .loading {
 	text-align: center;
 	padding: 20px;
 	color: #666666;
 	font-style: italic;
 }
+
 .error {
 	background-color: #ffe6e6;
 	border: 1px solid #ffcccc;
 	padding: 10px;
 	color: #cc0000;
 }
+
 .info {
 	background-color: #e6f3ff;
 	border: 1px solid #b3d9ff;
@@ -176,29 +207,36 @@ body {
 	color: #0066cc;
 	margin-bottom: 15px;
 }
+
 /* Blog post content styles */
 .blog-content {
 	line-height: 1.6;
 }
+
 .blog-content h1, .blog-content h2, .blog-content h3 {
 	color: #333333;
 	margin-top: 20px;
 	margin-bottom: 10px;
 }
+
 .blog-content h1 {
 	font-size: 18px;
 	border-bottom: 1px solid #dddddd;
 	padding-bottom: 5px;
 }
+
 .blog-content h2 {
 	font-size: 16px;
 }
+
 .blog-content h3 {
 	font-size: 14px;
 }
+
 .blog-content p {
 	margin-bottom: 10px;
 }
+
 .blog-content code {
 	background-color: #f0f0f0;
 	border: 1px solid #dddddd;
@@ -206,6 +244,7 @@ body {
 	font-family: "Courier New", monospace;
 	font-size: 11px;
 }
+
 .blog-content pre {
 	background-color: #f8f8f8;
 	border: 1px solid #dddddd;
@@ -214,6 +253,7 @@ body {
 	font-family: "Courier New", monospace;
 	font-size: 11px;
 }
+
 .blog-content blockquote {
 	border-left: 3px solid #cccccc;
 	margin-left: 0;
@@ -221,17 +261,21 @@ body {
 	color: #666666;
 	font-style: italic;
 }
+
 .back-to-blog {
 	margin-bottom: 15px;
 }
+
 .back-to-blog a {
 	color: #0066cc;
 	text-decoration: none;
 	font-size: 11px;
 }
+
 .back-to-blog a:hover {
 	text-decoration: underline;
 }
+
 .blog-content img {
 	max-width: 100%;
 	height: auto;
@@ -241,6 +285,7 @@ body {
 	border-radius: 4px;
 	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
 .blog-content .image-caption {
 	text-align: center;
 	font-size: 11px;
@@ -249,6 +294,7 @@ body {
 	margin-top: -10px;
 	margin-bottom: 15px;
 }
+
 /* Mermaid diagram styles */
 .blog-content .mermaid {
 	text-align: center;
@@ -258,10 +304,12 @@ body {
 	border: 1px solid #e0e0e0;
 	border-radius: 4px;
 }
+
 .blog-content .mermaid svg {
 	max-width: 100%;
 	height: auto;
 }
+
 /* Mermaid diagram container */
 .mermaid-container {
 	margin: 20px 0;
@@ -271,6 +319,7 @@ body {
 	border-radius: 4px;
 	text-align: center;
 }
+
 .mermaid-error {
 	background-color: #ffe6e6;
 	border: 1px solid #ffcccc;
@@ -281,6 +330,7 @@ body {
 	font-family: monospace;
 	font-size: 11px;
 }
+
 #footer {
 	clear: both;
 	background-color: #f0f0f0;
@@ -290,10 +340,12 @@ body {
 	font-size: 11px;
 	color: #666666;
 }
+
 a {
 	color: #0066cc;
 	text-decoration: underline;
 }
+
 a:hover {
 	color: #003366;
 }
@@ -324,27 +376,36 @@ a:hover {
         <li><a href="blog.html" class="current">Blog</a></li>
         <li><a href="links.html">Links & Contact</a></li>
       </ul>
-      <div id="blog-stats" style="margin-top: 20px; padding: 10px; border: 1px dashed #cccccc; background-color: #ffffcc; font-size: 11px;"> <strong>Blog Stats:</strong><br>
+      <div id="blog-stats" style="margin-top: 20px; padding: 10px; border: 1px dashed #cccccc; background-color: #ffffcc; font-size: 11px;">
+        <strong>Blog Stats:</strong><br>
         Total Posts: <span id="post-count">Loading...</span><br>
-        Last Post: <span id="last-post-date">Loading...</span> </div>
-      <div style="margin-top: 15px; padding: 8px; border: 1px solid #cccccc; background-color: #f0f8ff; font-size: 10px;"> <strong>Hosted on:</strong><br>
-        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMEMzLjU4IDAgMCAzLjU4IDAgOEMwIDExLjU0IDIuMjkgMTQuNTMgNS40NyAxNS41OUM1Ljg3IDE1LjY2IDYuMDIgMTUuNDIgNi4wMiAxNS4yMUM2LjAyIDE1LjAyIDYuMDEgMTQuMzkgNi4wMSAxMy43MkM0IDE0LjA5IDMuNDggMTIuNjggMy4yOCAxMS45NUMzLjE3IDExLjU3IDIuNzggMTAuOTYgMi40NCAxMC43NkMyLjE1IDEwLjYgMS43MSAxMC4yMyAxLjcgMTAuMjNDMS43IDEwLjIzIDIuNDQgMTAuMzEgMi44OCAxMC44OEMzLjMgMTEuNDUgMy45NyAxMS4yNCA0LjI4IDExLjA5QzQuMzQgMTAuNTcgNC41NCAxMC4zNSA0Ljc2IDEwLjIyQzMuNDcgMTAuMDkgMi4xNCA5LjU2IDIuMTQgNi44MUMyLjE0IDYuMDMgMi40MiA1LjM5IDIuODkgNC44OUMyLjgyIDQuNzYgMi42IDQuMDMgMi45NiAzLjA2QzIuOTYgMy4wNiAzLjUgMi44NyA2IDQuNzVDNi41IDQuNjMgNy4yNSA0LjU3IDggNC41N0M4Ljc1IDQuNTcgOS41IDQuNjMgMTAgNC43NUMxMi41IDIuODcgMTMuMDQgMy4wNiAxMy4wNCAzLjA2QzEzLjQgNC4wMyAxMy4xOCA0Ljc2IDEzLjExIDQuODlDMTMuNTggNS4zOSAxMy44NiA2LjAzIDEzLjg2IDYuODFDMTMuODYgOS41NiAxMi41MyAxMC4wOSAxMS4yNCAxMC4yMkMxMS40NiAxMC40NSAxMS42NiAxMC44NyAxMS42NiAxMS41M0MxMS42NiAxMi41IDExLjY1IDEzLjI3IDExLjY1IDE1LjIxQzExLjY1IDE1LjQyIDExLjggMTUuNjYgMTIuMiAxNS41OUMxNS43MSAxNC41MyAxNiAxMS41NCAxNiA4QzE2IDMuNTggMTIuNDIgMCA4IDBaIiBmaWxsPSIjMjQyOTJFIi8+Cjwvc3ZnPgo=" alt="GitHub" style="vertical-align: middle; margin-right: 3px;"> GitHub Pages </div>
+        Last Post: <span id="last-post-date">Loading...</span>
+      </div>
+      <div style="margin-top: 15px; padding: 8px; border: 1px solid #cccccc; background-color: #f0f8ff; font-size: 10px;">
+        <strong>Hosted on:</strong><br>
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMEMzLjU4IDAgMCAzLjU4IDAgOEMwIDExLjU0IDIuMjkgMTQuNTMgNS40NyAxNS41OUM1Ljg3IDE1LjY2IDYuMDIgMTUuNDIgNi4wMiAxNS4yMUM2LjAyIDE1LjAyIDYuMDEgMTQuMzkgNi4wMSAxMy43MkM0IDE0LjA5IDMuNDggMTIuNjggMy4yOCAxMS45NUMzLjE3IDExLjU3IDIuNzggMTAuOTYgMi40NCAxMC43NkMyLjE1IDEwLjYgMS43MSAxMC4yMyAxLjcgMTAuMjNDMS43IDEwLjIzIDIuNDQgMTAuMzEgMi44OCAxMC44OEMzLjMgMTEuNDUgMy45NyAxMS4yNCA0LjI4IDExLjA5QzQuMzQgMTAuNTcgNC41NCAxMC4zNSA0Ljc2IDEwLjIyQzMuNDcgMTAuMDkgMi4xNCA5LjU2IDIuMTQgNi44MUMyLjE0IDYuMDMgMi40MiA1LjM5IDIuODkgNC44OUMyLjgyIDQuNzYgMi42IDQuMDMgMi45NiAzLjA2QzIuOTYgMy4wNiAzLjUgMi44NyA2IDQuNzVDNi41IDQuNjMgNy4yNSA0LjU3IDggNC41N0M4Ljc1IDQuNTcgOS41IDQuNjMgMTAgNC43NUMxMi41IDIuODcgMTMuMDQgMy4wNiAxMy4wNCAzLjA2QzEzLjQgNC4wMyAxMy4xOCA0Ljc2IDEzLjExIDQuODlDMTMuNTggNS4zOSAxMy44NiA2LjAzIDEzLjg2IDYuODFDMTMuODYgOS41NiAxMi41MyAxMC4wOSAxMS4yNCAxMC4yMkMxMS40NiAxMC40NSAxMS42NiAxMC44NyAxMS42NiAxMS41M0MxMS42NiAxMi41IDExLjY1IDEzLjI3IDExLjY1IDE1LjIxQzExLjY1IDE1LjQyIDExLjggMTUuNjYgMTIuMiAxNS41OUMxNS43MSAxNC41MyAxNiAxMS41NCAxNiA4QzE2IDMuNTggMTIuNDIgMCA4IDBaIiBmaWxsPSIjMjQyOTJFIi8+Cjwvc3ZnPgo=" alt="GitHub" style="vertical-align: middle; margin-right: 3px;">
+        GitHub Pages
+      </div>
     </div>
-    <div id="content"> 
+    <div id="content">
       <!-- Blog listing view -->
       <div id="blog-listing">
         <div class="section">
           <div class="section-header">Latest Blog Posts</div>
           <div class="section-content">
             <div class="info"><strong>Feel Free to look around! </strong>Ill post stuff here occasionally.</div>
-            <div id="posts-container" class="loading"> Scanning for blog posts... </div>
+            <div id="posts-container" class="loading">
+              Scanning for blog posts...
+            </div>
           </div>
         </div>
       </div>
       
       <!-- Individual blog post view -->
       <div id="blog-post" style="display: none;">
-        <div class="back-to-blog"> <a href="blog.html">&laquo; Back to Blog</a> </div>
+        <div class="back-to-blog">
+          <a href="blog.html">&laquo; Back to Blog</a>
+        </div>
         <div class="section">
           <div class="section-header" id="post-title">Blog Post</div>
           <div class="section-content">
@@ -355,10 +416,13 @@ a:hover {
         </div>
       </div>
     </div>
-    <div id="footer"> &copy; 2025 colorBanded | Hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a> | <a href="#" onclick="alert('Under construction!'); return false;">Site Map</a><br>
-      Best viewed in LibreWolf Browser - Github.com/colorbanded </div>
+    <div id="footer">
+      &copy; 2025 colorBanded | Hosted on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a> | <a href="#" onclick="alert('Under construction!'); return false;">Site Map</a><br>
+      Best viewed in LibreWolf Browser - Github.com/colorbanded
+    </div>
   </div>
 </div>
+
 <script type="text/javascript">
 // GitHub repository configuration
 const GITHUB_REPO = {
@@ -426,7 +490,7 @@ function parseMarkdown(markdown) {
     });
     
     // Step 4: Process images with better handling
-    html = html.replace(/!\[([^\]]*)\]\(([^)]*?)(?:\s+"([^"]*)")?\)/gim, (match, alt, src, title) => {
+    html = html.replace(/!\[([^\]]*)\]$$([^)]*?)(?:\s+"([^"]*)")?$$/gim, (match, alt, src, title) => {
         // Clean up alt text and title
         const cleanAlt = alt.trim();
         const cleanTitle = title ? title.trim() : '';
@@ -437,11 +501,11 @@ function parseMarkdown(markdown) {
             imageSrc = `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${imageSrc}`;
         }
         
-        // Build image HTML with proper attributes
-        const titleAttr = cleanTitle ? ` title="${cleanTitle.replace(/"/g, '&quot;')}"` : '';
-        const altAttr = cleanAlt ? ` alt="${cleanAlt.replace(/"/g, '&quot;')}"` : ' alt=""';
+        // Build image HTML with proper attributes - FIXED LINE
+        const titleValue = cleanTitle ? cleanTitle.replace(/"/g, '&quot;') : undefined;
+        const altValue = cleanAlt ? cleanAlt.replace(/"/g, '&quot;') : '';
         
-        let imageHtml = `<img src="${imageSrc}"${altAttr}${titleAttr} loading="lazy">`;
+        let imageHtml = `<img src="${imageSrc}" alt="${altValue}"${titleValue ? ` title="${titleValue}"` : ''} loading="lazy">`;
         
         // Add caption if title or alt text exists
         const caption = cleanTitle || cleanAlt;
@@ -477,7 +541,7 @@ function parseMarkdown(markdown) {
     html = html.replace(/\_((?:[^_]|\_(?!\_))*?)\_/gim, '<em>$1</em>');
     
     // Step 8: Process links
-    html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>');
+    html = html.replace(/\[([^\]]*)\]$$([^)]*)$$/gim, '<a href="$2">$1</a>');
     
     // Step 9: Process line breaks and paragraphs
     // First, normalize line endings
@@ -660,13 +724,13 @@ function extractExcerpt(content, maxLength = 150) {
     excerpt = excerpt.replace(/`[^`\n]+`/gim, '');
     
     // Remove images
-    excerpt = excerpt.replace(/!\[([^\]]*)\]\([^)]*\)/gim, '');
+    excerpt = excerpt.replace(/!\[([^\]]*)\]$$[^)]*$$/gim, '');
     
     // Remove headers
     excerpt = excerpt.replace(/^#{1,6}\s+/gm, '');
     
     // Remove links but keep text
-    excerpt = excerpt.replace(/\[([^\]]*)\]\([^)]*\)/gim, '$1');
+    excerpt = excerpt.replace(/\[([^\]]*)\]$$[^)]*$$/gim, '$1');
     
     // Remove bold/italic markers
     excerpt = excerpt.replace(/\*\*\*(.*?)\*\*\*/gim, '$1');
